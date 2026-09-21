@@ -17,10 +17,7 @@ interface CatalogGroupScreenProps {
   subheading: string;
 }
 
-/**
- * Scrollable group of shelves — used for both the Movies tab and the TV tab,
- * and for the People tab's single grid-free section is handled separately.
- */
+// Movies and TV tabs are the same screen with a different category list.
 export const CatalogGroupScreen = ({
   categories,
   heading,
@@ -52,8 +49,8 @@ export const CatalogGroupScreen = ({
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
     setRefreshToken(token => token + 1);
-    // Each shelf refetches independently, so there is no single promise to
-    // await here — this timer only drives the pull-to-refresh spinner.
+    // every shelf refetches on its own, so there is no single promise to await
+    // here. The data does refresh, this timer just drives the spinner.
     setTimeout(() => setRefreshing(false), 800);
   }, []);
 

@@ -14,7 +14,7 @@ export interface PeopleListResult {
   refetch: () => void;
 }
 
-/** Paginated `/person/popular` list (requirement 9 from the brief). */
+// list 9 from the brief, paged
 export const usePeopleList = ({ skip = false }: { skip?: boolean } = {}): PeopleListResult => {
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<PersonSummary[]>([]);

@@ -29,7 +29,7 @@ export const MovieDetailScreen = () => {
   const creditsQuery = useMovieCreditsQuery(id);
   const detail = detailQuery.data;
 
-  /** Normalised once so the shared watchlist controls can consume it. */
+  // shape the response into the view model the watchlist controls expect
   const summary = useMemo<MediaSummary | null>(() => {
     if (!detail) {
       return null;
@@ -60,7 +60,7 @@ export const MovieDetailScreen = () => {
   if (detailQuery.isLoading) {
     return (
       <View style={styles.screen}>
-        <StateView loading title="Loading movie…" subtitle="Fetching details from TMDB." />
+        <StateView loading title="Loading movie..." subtitle="Fetching details from TMDB." />
       </View>
     );
   }
@@ -120,7 +120,7 @@ export const MovieDetailScreen = () => {
 
         <GenreChips genres={detail.genres} />
 
-        {detail.tagline ? <Text style={styles.tagline}>“{detail.tagline}”</Text> : null}
+        {detail.tagline ? <Text style={styles.tagline}>{detail.tagline}</Text> : null}
 
         <View style={styles.block}>
           <Text style={styles.blockTitle}>Overview</Text>
@@ -132,7 +132,7 @@ export const MovieDetailScreen = () => {
         <WatchlistActions item={summary} />
 
         {creditsQuery.isLoading ? (
-          <StateView compact loading title="Loading cast…" />
+          <StateView compact loading title="Loading cast..." />
         ) : null}
 
         {creditsQuery.data ? (

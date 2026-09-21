@@ -23,11 +23,9 @@ const MONTHS = [
   'Dec',
 ];
 
-/**
- * TMDB dates are ISO (`2024-07-12`) and frequently empty for unreleased titles.
- * Parsing the string manually avoids the UTC off-by-one day bug you get when
- * feeding `new Date('2024-07-12')` into `toLocaleDateString()`.
- */
+// TMDB dates are plain ISO strings and often empty for unreleased titles.
+// Parsing by hand avoids the UTC off-by-one you get from new Date('2024-07-12')
+// followed by toLocaleDateString().
 export const formatDateLabel = (value: string | null | undefined): string => {
   if (!value) {
     return 'TBA';
@@ -48,7 +46,7 @@ export const formatDateLabel = (value: string | null | undefined): string => {
   return `${Number(day)} ${monthName} ${year}`;
 };
 
-/** TMDB reports `0` for "not enough votes yet" — render that as NR, not 0.0. */
+// TMDB returns 0 when a title has too few votes. Show NR instead of 0.0.
 export const formatRating = (voteAverage: number | null | undefined): string => {
   if (typeof voteAverage !== 'number' || !Number.isFinite(voteAverage) || voteAverage <= 0) {
     return 'NR';
@@ -59,7 +57,7 @@ export const formatRating = (voteAverage: number | null | undefined): string => 
 
 export const formatRuntime = (minutes: number | null | undefined): string => {
   if (typeof minutes !== 'number' || !Number.isFinite(minutes) || minutes <= 0) {
-    return '—';
+    return '-';
   }
 
   const hours = Math.floor(minutes / 60);
@@ -127,10 +125,8 @@ export const describeKnownFor = (person: Person): string => {
   return person.known_for_department ?? 'Acting';
 };
 
-/**
- * `/person/{id}/combined_credits` mixes movies and TV shows in one array with
- * optional fields — this normalises an entry (or rejects it) for the grid.
- */
+// combined_credits mixes movies and TV in one array, and most fields are
+// optional. Returns null for entries that are neither, so callers can filter.
 export const toMediaSummaryFromCredit = (
   item: CombinedCreditItem,
 ): MediaSummary | null => {

@@ -59,7 +59,7 @@ export const TvDetailScreen = () => {
   if (detailQuery.isLoading) {
     return (
       <View style={styles.screen}>
-        <StateView loading title="Loading TV show…" subtitle="Fetching details from TMDB." />
+        <StateView loading title="Loading TV show..." subtitle="Fetching details from TMDB." />
       </View>
     );
   }
@@ -133,7 +133,7 @@ export const TvDetailScreen = () => {
           </View>
         </View>
 
-        {detail.tagline ? <Text style={styles.tagline}>“{detail.tagline}”</Text> : null}
+        {detail.tagline ? <Text style={styles.tagline}>{detail.tagline}</Text> : null}
 
         <View style={styles.block}>
           <Text style={styles.blockTitle}>Overview</Text>
@@ -145,7 +145,7 @@ export const TvDetailScreen = () => {
         <WatchlistActions item={summary} />
 
         {creditsQuery.isLoading ? (
-          <StateView compact loading title="Loading cast…" />
+          <StateView compact loading title="Loading cast..." />
         ) : null}
 
         {creditsQuery.data ? (

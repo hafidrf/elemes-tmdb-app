@@ -12,11 +12,8 @@ interface CatalogGridRowProps {
   onPressPerson: (person: PersonSummary) => void;
 }
 
-/**
- * Renders one cell of a mixed results grid (poster or portrait).
- * Shared by the "See All" category grid and the search results grid so the
- * media/person switch exists in exactly one place.
- */
+// One cell of a mixed grid, poster or portrait. Shared by the "See All" and
+// search grids so the media/person switch lives in one place.
 export const CatalogGridRow = ({
   row,
   cardWidth,

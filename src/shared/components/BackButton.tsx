@@ -9,7 +9,7 @@ interface BackButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/** Circular back affordance shared by the detail and search screens. */
+// back button shared by the detail and search screens
 export const BackButton = ({ onPress, style }: BackButtonProps) => (
   <Pressable
     onPress={onPress}

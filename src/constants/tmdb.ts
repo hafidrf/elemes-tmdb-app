@@ -1,13 +1,9 @@
-/**
- * Pure, dependency-free TMDB constants.
- *
- * Deliberately separate from `config.ts` (which reads `@env`) so unit tests can
- * import the URL/size helpers without touching the Babel-inlined env module.
- */
+// Plain constants, kept out of config.ts so the helpers built on top of them
+// can be unit tested without a .env file.
 export const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 export const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/';
 
-/** Image widths recommended by the TMDB `/configuration` endpoint. */
+// widths from TMDB's /configuration endpoint
 export const imageSizes = {
   posterSmall: 'w185',
   posterMedium: 'w342',

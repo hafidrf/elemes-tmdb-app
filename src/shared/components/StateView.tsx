@@ -8,19 +8,16 @@ interface StateViewProps {
   title: string;
   subtitle?: string;
   icon?: IconName;
-  /** Shows a spinner instead of the icon (first-load state). */
+  // spinner instead of the icon, for the first load
   loading?: boolean;
   actionLabel?: string;
   onAction?: () => void;
-  /** Renders inline (inside a section) rather than as a full-screen state. */
+  // inline inside a section, instead of a full-screen state
   compact?: boolean;
 }
 
-/**
- * One component for every non-happy path: first load, empty result and error.
- * Error states always offer a retry action, per the brief's requirement that a
- * failed request shows an informative screen instead of a blank one.
- */
+// Used for every non-happy path: first load, empty result, error. The error
+// state gets a retry button so a failed request never leaves a blank screen.
 export const StateView = ({
   title,
   subtitle,

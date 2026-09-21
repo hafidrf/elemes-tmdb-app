@@ -95,7 +95,7 @@ export const WatchlistScreen = () => {
           <StateView
             icon="bookmark"
             title="Your watchlist is empty"
-            subtitle="Open any movie or TV show and tap “Add to Watchlist”. Ratings you give are saved here too."
+            subtitle={'Open any movie or TV show and tap "Add to Watchlist". Your ratings are saved here too.'}
           />
         }
         showsVerticalScrollIndicator={false}

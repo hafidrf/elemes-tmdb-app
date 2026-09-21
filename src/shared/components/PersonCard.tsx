@@ -13,7 +13,7 @@ interface PersonCardProps {
   width: number;
 }
 
-/** Portrait card used by the People tab, search results and person credits. */
+// portrait card, used by the People tab, search and the filmography grids
 export const PersonCard = ({ person, onPress, width }: PersonCardProps) => {
   const portraitHeight = Math.round(width * layout.profileAspect);
 

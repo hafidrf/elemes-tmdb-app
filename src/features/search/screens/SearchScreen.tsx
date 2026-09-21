@@ -47,11 +47,8 @@ const toRow = (result: SearchResult): CatalogRow | null => {
 
 const rowKey = (row: CatalogRow): string => `${row.kind}-${row.item.id}`;
 
-/**
- * Single search bar over `/search/multi`, which covers movies, TV shows and
- * people in one request. Input is debounced so typing does not fire a request
- * per keystroke.
- */
+// search/multi covers movies, TV and people in one call, so a single bar is
+// enough. Typing is debounced to avoid a request per keystroke.
 export const SearchScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
@@ -73,7 +70,7 @@ export const SearchScreen = () => {
 
   const cardWidth = Math.floor((width - layout.screenPadding * 2 - layout.gridGap) / 2);
 
-  // A new term always starts from page 1 with a clean grid.
+  // new term, so new grid starting at page 1
   useEffect(() => {
     setRows([]);
     setPage(1);
@@ -140,7 +137,7 @@ export const SearchScreen = () => {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Movies, TV shows, people…"
+          placeholder="Movies, TV shows, people..."
           placeholderTextColor={colors.textMuted}
           style={styles.input}
           autoFocus
@@ -223,7 +220,7 @@ export const SearchScreen = () => {
         ListEmptyComponent={
           <StateView
             icon="search"
-            title={`No results for “${debouncedQuery}”`}
+            title={`No results for "${debouncedQuery}"`}
             subtitle="Try a different title or a person's name."
           />
         }

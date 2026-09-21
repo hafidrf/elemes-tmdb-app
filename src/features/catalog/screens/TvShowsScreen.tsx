@@ -3,7 +3,7 @@ import React from 'react';
 import { TV_CATEGORIES } from '../catalogConfig';
 import { CatalogGroupScreen } from './CatalogGroupScreen';
 
-/** Requirements 5–8 from the brief: the four TV lists. */
+// lists 5-8 from the brief
 export const TvShowsScreen = () => (
   <CatalogGroupScreen
     categories={TV_CATEGORIES}

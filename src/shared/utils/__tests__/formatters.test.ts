@@ -14,7 +14,7 @@ const movie: Movie = {
   id: 550,
   title: 'Fight Club',
   original_title: 'Fight Club',
-  overview: 'An insomniac office worker…',
+  overview: 'An insomniac office worker...',
   poster_path: '/poster.jpg',
   backdrop_path: '/backdrop.jpg',
   release_date: '1999-10-15',
@@ -98,9 +98,9 @@ describe('formatRuntime', () => {
     expect(formatRuntime(48)).toBe('48m');
   });
 
-  it('renders an em dash for unknown runtimes', () => {
-    expect(formatRuntime(null)).toBe('—');
-    expect(formatRuntime(0)).toBe('—');
+  it('renders a dash for unknown runtimes', () => {
+    expect(formatRuntime(null)).toBe('-');
+    expect(formatRuntime(0)).toBe('-');
   });
 });
 

@@ -19,21 +19,18 @@ export interface CatalogCategory {
   mediaType: MediaType;
   movieCategory?: MovieListCategory;
   tvCategory?: TvListCategory;
-  /** Index of the item in the brief's list of nine — kept for traceability. */
+  // position in the brief's list of nine, so the README table can point at it
   requirementNumber: number;
 }
 
-/**
- * Single registry for all nine lists from the brief.
- *
- * The screens, the "See All" grids and the README checklist all read from this
- * array, so a requirement can never be "called by the API but never shown".
- */
+// All nine lists from the brief in one array. The tabs, the "See All" grids and
+// the README table all read from here, so a list cannot be fetched and then
+// quietly left out of the UI.
 export const MOVIE_CATEGORIES: CatalogCategory[] = [
   {
     key: 'movie_popular',
     title: 'Popular Movies',
-    subtitle: 'What everyone is watching right now',
+    subtitle: 'What people are watching right now',
     group: 'movies',
     mediaType: 'movie',
     movieCategory: 'popular',
@@ -51,7 +48,7 @@ export const MOVIE_CATEGORIES: CatalogCategory[] = [
   {
     key: 'movie_upcoming',
     title: 'Upcoming Movies',
-    subtitle: 'Coming soon to a cinema near you',
+    subtitle: 'Releasing soon',
     group: 'movies',
     mediaType: 'movie',
     movieCategory: 'upcoming',
@@ -111,7 +108,7 @@ export const PEOPLE_CATEGORIES: CatalogCategory[] = [
   {
     key: 'person_popular',
     title: 'Popular People',
-    subtitle: 'Faces you know from the screen',
+    subtitle: 'Trending actors and crew',
     group: 'people',
     mediaType: 'person',
     requirementNumber: 9,

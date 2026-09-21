@@ -1,12 +1,8 @@
 import { TMDB_API_KEY, TMDB_READ_ACCESS_TOKEN } from '@env';
 
-/**
- * The only module in the app that reads `@env`.
- *
- * Keeping the `@env` import in one leaf module means:
- *  - unit tests never have to resolve the Babel-inlined env module, and
- *  - a missing `.env` degrades into an explainable message instead of a crash.
- */
+// react-native-dotenv inlines these at build time. Keeping the @env import in
+// this one file means the rest of the app, and the tests, never depend on .env
+// being around.
 const normalise = (value: string | undefined): string =>
   typeof value === 'string' ? value.trim() : '';
 

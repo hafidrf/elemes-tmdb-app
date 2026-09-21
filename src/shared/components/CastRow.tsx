@@ -14,7 +14,7 @@ interface CastRowProps {
   onPressPerson?: (person: CastMember) => void;
 }
 
-/** Horizontal cast strip for the movie and TV detail screens. */
+// cast strip, used by the movie and TV detail screens
 export const CastRow = ({ cast, onPressPerson }: CastRowProps) => {
   const topBilled = cast.slice(0, 14);
 

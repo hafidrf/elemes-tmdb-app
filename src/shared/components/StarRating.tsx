@@ -5,7 +5,7 @@ import { colors } from '../theme/colors';
 import { AppIcon } from './AppIcon';
 
 interface StarRatingProps {
-  /** Current score, 0–5. `0` means "not rated". */
+  // 0-5, 0 means not rated
   value: number;
   onChange?: (value: number) => void;
   size?: number;
@@ -15,11 +15,8 @@ interface StarRatingProps {
 
 const STARS = [1, 2, 3, 4, 5];
 
-/**
- * 5-star input (`onChange` given) or read-out (read-only).
- * Tapping the active star again clears the rating — otherwise a mis-tap in a
- * 5-star control is impossible to undo.
- */
+// Five stars. Pass onChange for an input, leave it out for a read-out. Tapping
+// the current star clears the rating, otherwise a mis-tap can't be undone.
 export const StarRating = ({
   value,
   onChange,

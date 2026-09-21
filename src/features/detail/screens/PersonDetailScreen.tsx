@@ -46,7 +46,7 @@ export const PersonDetailScreen = () => {
 
   const cardWidth = Math.floor((width - layout.screenPadding * 2 - layout.gridGap) / 2);
 
-  /** Most recent credits first, de-duplicated across movie/TV. */
+  // newest credits first; combined_credits can repeat a title, hence the dedupe
   const filmography = useMemo<MediaSummary[]>(() => {
     const cast = creditsQuery.data?.cast ?? [];
 
@@ -98,7 +98,7 @@ export const PersonDetailScreen = () => {
   if (detailQuery.isLoading) {
     return (
       <View style={detailStyles.screen}>
-        <StateView loading title="Loading person…" subtitle="Fetching biography from TMDB." />
+        <StateView loading title="Loading person..." subtitle="Fetching biography from TMDB." />
       </View>
     );
   }

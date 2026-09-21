@@ -23,7 +23,7 @@ import { usePeopleList } from '../usePeopleList';
 const HEADING = 'People';
 const SUBHEADING = 'Popular faces on TMDB right now';
 
-/** Requirement 9 from the brief: Popular People, as a paginated grid. */
+// list 9 from the brief
 export const PeopleScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();

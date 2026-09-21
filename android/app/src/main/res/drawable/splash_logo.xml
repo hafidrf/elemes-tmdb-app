@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Splash mark: an amber ring with a play glyph, drawn as a vector so the app
-  needs no bitmap asset and scales cleanly on every density.
--->
+<!-- vector so there's no PNG to ship and it scales at any density -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="120dp"
     android:height="120dp"

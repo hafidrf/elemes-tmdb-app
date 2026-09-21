@@ -18,11 +18,8 @@ import {
   VideosResponse,
 } from '../../shared/types/tmdb';
 
-/**
- * TMDB accepts either the v4 bearer token (preferred, sent as a header so it
- * never lands in server logs) or the legacy v3 `api_key` query parameter.
- * We prefer the bearer token and only fall back when it is not configured.
- */
+// TMDB takes either the v4 bearer token or the older v3 api_key query param. The
+// bearer token is preferred; api_key is the fallback for when only that is set.
 const useBearerToken = tmdbReadAccessToken.length > 0;
 
 const authParams = (): Record<string, string | number> =>
@@ -110,7 +107,7 @@ export const tmdbApi = createApi({
       providesTags: ['Person'],
     }),
 
-    /** One call covers movies, TV and people — ideal for a single search bar. */
+    // one request covers movies, TV and people
     searchMulti: builder.query<
       PaginatedResponse<SearchResult>,
       { query: string; page?: number }

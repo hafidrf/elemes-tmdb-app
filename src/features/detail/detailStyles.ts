@@ -3,11 +3,8 @@ import { StyleSheet } from 'react-native';
 import { colors } from '../../shared/theme/colors';
 import { layout } from '../../shared/theme/layout';
 
-/**
- * Shared typography/spacing for the movie, TV and person detail screens.
- * Only layout that genuinely differs between the three lives in the screens
- * themselves.
- */
+// Typography and spacing shared by the three detail screens. Only what actually
+// differs between them lives in the screens themselves.
 export const detailStyles = StyleSheet.create({
   screen: {
     flex: 1,

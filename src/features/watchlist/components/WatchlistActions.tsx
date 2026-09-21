@@ -17,11 +17,8 @@ interface WatchlistActionsProps {
   item: MediaSummary;
 }
 
-/**
- * Watchlist toggle plus the user's own star rating.
- * The rating control only appears once the title is in the watchlist, so the
- * detail screen stays calm for titles the user is just browsing.
- */
+// watchlist button plus the user's own star rating. The stars only appear once
+// the title is saved, so browsing stays uncluttered.
 export const WatchlistActions = ({ item }: WatchlistActionsProps) => {
   const dispatch = useAppDispatch();
   const isSaved = useAppSelector(state =>

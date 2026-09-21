@@ -10,14 +10,14 @@ export interface WatchlistEntry {
   posterPath: string | null;
   voteAverage: number;
   dateLabel: string;
-  /** The user's own 0–5 star score. `0` means "not rated yet". */
+  // the user's own 0-5 score, 0 = not rated
   userRating: number;
   addedAt: number;
 }
 
 export interface WatchlistState {
   entries: WatchlistEntry[];
-  /** True once AsyncStorage has been read, so we do not overwrite it with []. */
+  // set once AsyncStorage has been read, so we don't clobber it with []
   hydrated: boolean;
 }
 
@@ -28,7 +28,7 @@ const initialState: WatchlistState = {
 
 const entryKey = (id: number, mediaType: WatchableMediaType): string => `${mediaType}-${id}`;
 
-/** Single place that knows how an entry is shaped and inserted. */
+// the one place that knows how an entry is shaped
 const insertEntry = (state: WatchlistState, item: MediaSummary): void => {
   const key = entryKey(item.id, item.mediaType);
 

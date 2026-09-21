@@ -54,9 +54,7 @@ interface PosterSkeletonProps {
   showCaption?: boolean;
 }
 
-/**
- * Shaped like a real poster card, so the layout does not jump when data lands.
- */
+// Same shape as a real poster card, so the layout doesn't jump when data lands.
 export const PosterSkeleton = ({
   width = layout.posterCardWidth,
   showCaption = true,
@@ -81,7 +79,7 @@ interface SkeletonRowProps {
   width?: number;
 }
 
-/** Horizontal strip of poster skeletons for carousel-style sections. */
+// horizontal strip for the carousel sections
 export const SkeletonRow = ({ count = 3, width = layout.posterCardWidth }: SkeletonRowProps) => (
   <Animated.View style={styles.row}>
     {Array.from({ length: count }).map((_, index) => (

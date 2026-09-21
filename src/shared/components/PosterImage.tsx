@@ -9,16 +9,12 @@ interface PosterImageProps {
   width: number;
   height: number;
   radius?: number;
-  /** Caption shown inside the placeholder when no artwork is available. */
+  // text shown inside the placeholder
   fallbackLabel?: string;
 }
 
-/**
- * Poster/portrait image with a designed placeholder.
- *
- * Handles both `null` paths from TMDB and remote load failures, so a missing
- * image never shows up as a broken icon or a blank white box.
- */
+// Poster/portrait image with a placeholder for when the path is null or the
+// download fails.
 export const PosterImage = ({
   uri,
   width,

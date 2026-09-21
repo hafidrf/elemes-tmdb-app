@@ -50,7 +50,7 @@ const TAB_ICONS: Record<keyof RootTabParamList, IconName> = {
 const TabsNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
-      // Each tab renders its own large headline via <ScreenHeader />.
+      // tabs render their own headline, so a navigator header would repeat it
       headerShown: false,
       tabBarActiveTintColor: colors.primary,
       tabBarInactiveTintColor: colors.textMuted,
@@ -76,7 +76,7 @@ const TabsNavigator = () => (
 );
 
 export const RootNavigator = () => {
-  // Loads the saved watchlist on launch and persists every change.
+  // hydrate the watchlist from AsyncStorage, then write changes back
   useWatchlistPersistence();
 
   return (

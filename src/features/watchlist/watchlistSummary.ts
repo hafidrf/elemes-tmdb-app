@@ -1,7 +1,7 @@
 import { MediaSummary } from '../../shared/types/tmdb';
 import { WatchlistEntry } from './watchlistSlice';
 
-/** Converts a stored watchlist entry back into the shared card view model. */
+// back to the view model the cards take
 export const toMediaSummaryFromEntry = (entry: WatchlistEntry): MediaSummary => ({
   id: entry.id,
   mediaType: entry.mediaType,

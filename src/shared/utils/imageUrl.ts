@@ -1,12 +1,7 @@
 import { TMDB_IMAGE_BASE_URL, imageSizes, ImageSizeKey } from '../../constants/tmdb';
 
-/**
- * Builds a TMDB image URL, or `null` when the path is missing.
- *
- * TMDB returns `null` for `poster_path` / `profile_path` surprisingly often
- * (unreleased titles, obscure people). Returning `null` lets the UI render an
- * intentional placeholder instead of a broken image.
- */
+// Returns null when there is no path, which happens often (unreleased titles,
+// obscure people). Callers show a placeholder instead of a broken image.
 export const buildImageUrl = (
   path: string | null | undefined,
   size: ImageSizeKey = 'posterMedium',

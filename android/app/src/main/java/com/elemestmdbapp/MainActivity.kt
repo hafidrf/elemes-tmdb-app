@@ -15,13 +15,11 @@ class MainActivity : ReactActivity() {
   override fun getMainComponentName(): String = "ElemesTmdbApp"
 
   /**
-   * Swaps the launch theme (`SplashTheme`, set in AndroidManifest) for the real
-   * app theme as soon as the activity starts. This is what makes the native
-   * splash screen disappear and the React UI appear.
+   * Swap SplashTheme (set in the manifest) for AppTheme once the activity
+   * starts. That is what dismisses the splash screen.
    *
-   * `super.onCreate(null)` is intentional: passing a null bundle stops Android
-   * from restoring the previous fragment state, which is the documented
-   * requirement when a React Native app owns the view hierarchy.
+   * onCreate gets null on purpose: a real bundle lets Android restore old
+   * fragment state underneath the React Native view tree.
    */
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.AppTheme)

@@ -1,18 +1,13 @@
-/**
- * TMDB response models.
- *
- * Only the fields this app actually renders are modelled, but every payload
- * that crosses the network boundary is typed — no `any` anywhere in the
- * data layer (see the code-quality checklist in the brief).
- */
+// Only the fields we actually render are modelled, but everything that crosses
+// the network is typed.
 
 export type MediaType = 'movie' | 'tv' | 'person';
 export type WatchableMediaType = 'movie' | 'tv';
 
-/** Path segments for the movie list endpoints (requirements 1–4). */
+// path segments for the movie list endpoints (lists 1-4)
 export type MovieListCategory = 'popular' | 'top_rated' | 'upcoming' | 'now_playing';
 
-/** Path segments for the TV list endpoints (requirements 5–8). */
+// path segments for the TV list endpoints (lists 5-8)
 export type TvListCategory = 'popular' | 'top_rated' | 'on_the_air' | 'airing_today';
 
 export interface PaginatedResponse<T> {
@@ -70,7 +65,7 @@ export interface Person {
   }>;
 }
 
-/** `/search/multi` returns a heterogeneous, `media_type`-tagged array. */
+// /search/multi mixes all three shapes, tagged by media_type
 export type SearchResult =
   | (Movie & { media_type: 'movie' })
   | (TvShow & { media_type: 'tv' })
@@ -141,18 +136,15 @@ export interface CombinedCreditsResponse {
   cast: CombinedCreditItem[];
 }
 
-/**
- * View model used by every card/grid in the UI. Normalising TMDB's three
- * shapes (`title` vs `name`, `release_date` vs `first_air_date`) once here
- * keeps the presentational components dumb and reusable.
- */
+// View model for every card and grid. TMDB says `title` for movies and `name`
+// for TV, so that difference gets flattened here rather than in the components.
 export interface MediaSummary {
   id: number;
   mediaType: WatchableMediaType;
   title: string;
   posterPath: string | null;
   voteAverage: number;
-  /** Release / first-air date, already formatted for display. */
+  // release / first-air date, pre-formatted
   dateLabel: string;
 }
 

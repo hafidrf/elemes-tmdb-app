@@ -22,11 +22,7 @@ import { usePeopleList } from '../../people/usePeopleList';
 import { findCategory } from '../catalogConfig';
 import { useMediaList } from '../useMediaList';
 
-/**
- * "See All" screen: the full, paginated grid for one of the nine lists.
- * This is what makes every category a first-class destination rather than an
- * endpoint that is called but never displayed.
- */
+// "See All" grid for one of the nine lists, with infinite scroll.
 export const CategoryListScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'CategoryList'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -39,8 +35,7 @@ export const CategoryListScreen = () => {
   );
   const isPerson = category.mediaType === 'person';
 
-  // Both hooks are always called; `skip` keeps the unused one idle so the
-  // Rules of Hooks are respected.
+  // both hooks run on every render, skip keeps the inactive one idle
   const mediaList = useMediaList(category);
   const peopleList = usePeopleList({ skip: !isPerson });
 

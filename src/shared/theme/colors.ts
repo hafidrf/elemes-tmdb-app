@@ -1,9 +1,5 @@
-/**
- * Single source of truth for the app palette.
- *
- * Direction: "dark cinema" — a near-black canvas so movie posters carry the
- * colour, with an amber/marquee accent instead of the generic SaaS purple.
- */
+// Dark palette, so the posters carry the colour. Amber accent rather than the
+// usual blue or purple.
 export const colors = {
   background: '#0B0D10',
   surface: '#14181E',

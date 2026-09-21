@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 
-/**
- * Delays propagating `value` until the user stops typing.
- * Used by the search screen so a request is not fired on every keystroke.
- */
+// Holds a value back until the user stops typing. Used by the search screen so
+// we don't fire a request on every keystroke.
 export const useDebouncedValue = <T,>(value: T, delayMs: number): T => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Native splash background: solid canvas colour with the logo centred.
-  Applied by `SplashTheme`, which MainActivity swaps for `AppTheme` in
-  onCreate(), so the splash disappears the moment React takes over.
--->
+<!-- launch background: solid colour with the logo centred -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/splash_background" />
     <item

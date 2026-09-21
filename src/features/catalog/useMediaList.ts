@@ -20,13 +20,9 @@ const mergeUnique = (previous: MediaSummary[], incoming: MediaSummary[]): MediaS
   return [...previous, ...incoming.filter(item => !seen.has(item.id))];
 };
 
-/**
- * Paginated list for any of the eight movie/TV categories.
- *
- * Both queries are always called and gated with RTK Query's `skip` option —
- * hooks cannot be called conditionally, so this is the correct way to keep one
- * generic hook drive two endpoints.
- */
+// Paginated list for any of the eight movie/TV categories. Both queries are
+// always called and gated with RTK Query's skip option, because hooks cannot be
+// called conditionally.
 export const useMediaList = (category: CatalogCategory): MediaListResult => {
   const isMovie = category.mediaType === 'movie';
   const isTv = category.mediaType === 'tv';
@@ -46,15 +42,15 @@ export const useMediaList = (category: CatalogCategory): MediaListResult => {
   const { data } = activeQuery;
   const mediaType = isMovie ? 'movie' : 'tv';
 
-  // New category → start over.
+  // switching category starts the list over
   useEffect(() => {
     setItems([]);
     setPage(1);
   }, [category.key]);
 
   useEffect(() => {
-    // Ignore any response that is not for the page we are currently showing,
-    // which can happen for one render right after the category changes.
+    // drop a response for a page we have already moved past, which can happen
+    // for one render right after a category change
     if (!data || data.page !== page) {
       return;
     }

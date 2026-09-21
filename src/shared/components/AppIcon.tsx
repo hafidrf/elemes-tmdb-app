@@ -1,14 +1,9 @@
 import React from 'react';
 import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native';
 
-/**
- * Lightweight glyph-based icon set.
- *
- * Deliberately dependency-free: `react-native-vector-icons` needs an extra
- * Gradle font-linking step, and on RN's New Architecture that is one more
- * native failure point than this project needs. Everything here is plain text,
- * so it renders identically on every device with zero native configuration.
- */
+// Plain text glyphs instead of an icon font. react-native-vector-icons needs an
+// extra Gradle font-linking step on Android, and this is a tab bar plus a few
+// badges, not a design system.
 export type IconName =
   | 'movie'
   | 'tv'

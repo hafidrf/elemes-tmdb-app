@@ -11,13 +11,9 @@ interface BackdropHeaderProps {
   onBack: () => void;
 }
 
-/**
- * Edge-to-edge backdrop with a floating back button.
- *
- * React Native has no gradient primitive without pulling in a native
- * dependency, so the fade into the page is built from three stacked bands of
- * the page background at increasing opacity — identical result, zero deps.
- */
+// Full-width backdrop with a floating back button. RN has no gradient, so the
+// fade down into the page is three stacked bands of the background colour at
+// increasing opacity.
 export const BackdropHeader = ({ backdropPath, onBack }: BackdropHeaderProps) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();

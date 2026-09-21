@@ -10,10 +10,7 @@ interface RatingBadgeProps {
   size?: 'sm' | 'md';
 }
 
-/**
- * Amber pill with the TMDB score. Unrated titles (TMDB returns `0`) render as a
- * muted "NR" instead of a misleading 0.0.
- */
+// Score pill. Unrated titles show a muted "NR" instead of 0.0.
 export const RatingBadge = ({ value, size = 'sm' }: RatingBadgeProps) => {
   const label = formatRating(value);
   const isRated = label !== 'NR';

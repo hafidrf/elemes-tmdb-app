@@ -20,11 +20,8 @@ interface SectionCarouselProps {
   onPressItem: (item: MediaSummary) => void;
 }
 
-/**
- * One horizontal shelf: heading, optional "See All", then the posters.
- * The heading renders immediately — only the shelf body swaps between
- * skeletons, an error state, an empty state and real cards.
- */
+// One shelf: heading, optional "See All", then the posters. The heading renders
+// straight away, only the body swaps between skeleton, error, empty and cards.
 export const SectionCarousel = ({
   title,
   subtitle,

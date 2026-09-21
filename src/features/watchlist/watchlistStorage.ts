@@ -8,10 +8,8 @@ const WATCHLIST_STORAGE_KEY = 'elemes_tmdb_app:watchlist';
 const isMediaType = (value: unknown): value is WatchableMediaType =>
   value === 'movie' || value === 'tv';
 
-/**
- * Parses stored JSON defensively: a corrupted or hand-edited value must never
- * take the app down on launch, it just resets the list.
- */
+// Parsed defensively: a corrupted value should reset the list, not crash the app
+// on launch.
 const parseEntries = (raw: string): WatchlistEntry[] => {
   try {
     const parsed = JSON.parse(raw) as unknown;

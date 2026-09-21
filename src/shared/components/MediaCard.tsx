@@ -14,11 +14,8 @@ interface MediaCardProps {
   width?: number;
 }
 
-/**
- * Poster card used by every carousel and grid in the app.
- * The rating badge is overlaid on the artwork so the caption keeps two clean
- * lines of text.
- */
+// Poster card for the carousels and grids. The score sits on the artwork so the
+// caption stays two lines of text.
 export const MediaCard = ({ item, onPress, width = layout.posterCardWidth }: MediaCardProps) => {
   const posterHeight = Math.round(width * layout.posterAspect);
 

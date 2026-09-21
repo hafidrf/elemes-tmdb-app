@@ -14,12 +14,8 @@ interface ScreenHeaderProps {
   showSearch?: boolean;
 }
 
-/**
- * In-screen headline used by the four tabs.
- *
- * The tab navigator's own header is hidden so each tab can carry a large
- * cinema-style title instead of repeating the same word twice on screen.
- */
+// The tabs' own headline. The navigator header is off, otherwise the same word
+// would show up twice on screen.
 export const ScreenHeader = ({ title, subtitle, showSearch = true }: ScreenHeaderProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
