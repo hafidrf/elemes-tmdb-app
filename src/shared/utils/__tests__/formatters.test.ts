@@ -1,4 +1,4 @@
-import { CombinedCreditItem, Movie, Person, TvShow } from '../types/tmdb';
+import { CombinedCreditItem, Movie, Person, TvShow } from '../../types/tmdb';
 import {
   describeKnownFor,
   formatCount,
