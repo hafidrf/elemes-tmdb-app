@@ -10,6 +10,40 @@ dipakai, bukan cuma 4. Ada splash screen native, skeleton loading di tiap layar,
 debounce, watchlist dan rating yang disimpan di perangkat. Cara jalaninnya di bagian
 "Running it" di bawah.
 
+## Tech stack
+
+| Layer | Choice |
+|---|---|
+| Framework | React Native CLI 0.85.2 (not Expo), New Architecture on |
+| Language | TypeScript, strict |
+| State | Redux Toolkit + RTK Query |
+| Navigation | React Navigation 7 — native stack plus bottom tabs |
+| Storage | AsyncStorage (watchlist and ratings) |
+| Images | `@d11/react-native-fast-image` — the maintained, Fabric-ready fast-image fork |
+| Icons | `@react-native-vector-icons/ionicons` |
+| Styling | `StyleSheet` API, every value from the tokens in `src/shared/theme` |
+| Testing | Jest + React Native Testing Library |
+| Lint / format | ESLint (`@react-native/eslint-config`) + Prettier |
+| Env | `react-native-dotenv` |
+
+## Requirement coverage
+
+Every item from the brief, and where it lives.
+
+| # | Requirement | Where it is satisfied |
+|---|---|---|
+| 1 | Movies & TV Shows theme | the whole app, fed by TMDB through `src/shared/api/tmdbApi.ts` |
+| 2 | At least 4 of the 9 lists (more is better) | **all 9**, declared once in `src/features/catalog/catalogConfig.ts`, breakdown below |
+| 3 | Splash screen | `SplashTheme` in `android/app/src/main/res/values/styles.xml`, swapped for `AppTheme` in `MainActivity.onCreate` |
+| 4 | Loading state while data is fetched | `Skeleton` placeholders on every screen, `ActivityIndicator` while paging, `StateView` for the error and empty cases |
+| 5 | Attractive UI/UX | the token system in `src/shared/theme` — see Design |
+| 6 | Search (bonus) | `SearchScreen` over `/search/multi`, 400 ms debounce |
+| 7 | Rating or watchlist | **both** — `StarRating` and the watchlist, persisted in AsyncStorage |
+| 8 | GitHub docs for installing and running | this README: Tech stack, Running it, Code layout, Known gaps |
+| 9 | Repo link sent to tommy@elemes.id | sent with this repo |
+| 10 | Version control | conventional commits on `main`, not one "final code" commit |
+| 11 | Framework is free (RN / Kotlin / Android Studio) | React Native CLI — see Tech stack |
+
 ## Screenshots
 
 Live captures from the release build on a physical phone (Infinix X6855, Android 16), not an
@@ -33,11 +67,16 @@ rating came back from AsyncStorage rather than from memory.
 You'll need Node 22+, JDK 17, and the Android SDK with `ANDROID_HOME` pointing at it.
 
 ```bash
+git clone https://github.com/hafidrf/elemes-tmdb-app.git
+cd elemes-tmdb-app
 npm install
 cp .env.example .env      # Windows: Copy-Item .env.example .env
 npm start                 # terminal 1
 npm run android           # terminal 2
 ```
+
+On iOS the native modules come from CocoaPods, so run `cd ios && pod install` once after
+`npm install`. The iOS half is otherwise untested — see Known gaps.
 
 ### Setting up .env
 
@@ -197,7 +236,8 @@ for the card and the star rating.
 
 No test touches `@env`, so the suite passes on a clone with no `.env`. `jest.config.js` widens
 `transformIgnorePatterns` because Redux Toolkit and the icon package both ship untranspiled source,
-and maps `.ttf` to a stub in `__mocks__/fontMock.js` because Jest cannot parse a font file.
+and maps `.ttf` to a stub in `__mocks__/fontMock.js` because Jest cannot parse a font file, and maps
+FastImage to `__mocks__/fastImageMock.js` so a native view never has to resolve.
 
 ## Notes
 
@@ -205,8 +245,12 @@ and maps `.ttf` to a stub in `__mocks__/fontMock.js` because Jest cannot parse a
   gives you one with no extra native dependency.
 - **Ionicons for the icon set.** One family with an outline cut, autolinked on Android so there is no
   manual font-linking step. The earlier build used text glyphs, which fall back to colour emoji.
-- **Plain RN `Image`, not react-native-fast-image.** Fresco already caches remote images on
-  Android. One less native module to keep in step with React Native releases.
+- **`@d11/react-native-fast-image`, not the original fast-image.** The stack list names
+  react-native-fast-image, but upstream has not shipped since 2021 and carries no Fabric support, so
+  it does not build against React Native 0.85 with the New Architecture on. The `@d11` fork is the
+  maintained one and declares the codegen config Fabric and TurboModules need. Both places that load
+  artwork sit behind one wrapper each — `PosterImage` for posters, `BackdropHeader` for the still —
+  so swapping the library again is a two-file change.
 - **AsyncStorage plus a small hook, not redux-persist.** The flush logic is 40 lines in
   `useWatchlistPersistence.ts`, and the `hydrated` flag in the slice stops the first render from
   writing an empty list over what was saved.
