@@ -9,6 +9,7 @@ import { ScreenHeader } from '../../../shared/components/ScreenHeader';
 import { StateView } from '../../../shared/components/StateView';
 import { colors } from '../../../shared/theme/colors';
 import { layout } from '../../../shared/theme/layout';
+import { type } from '../../../shared/theme/typography';
 import { MediaSummary } from '../../../shared/types/tmdb';
 import { WatchlistCard } from '../components/WatchlistCard';
 import {
@@ -110,9 +111,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   listContent: {
-    paddingTop: layout.screenPadding,
-    paddingBottom: 32,
-    gap: 20,
+    paddingBottom: layout.space8,
+    gap: layout.space4,
   },
   column: {
     gap: layout.gridGap,
@@ -120,15 +120,20 @@ const styles = StyleSheet.create({
   },
   clearAll: {
     alignSelf: 'flex-end',
-    marginTop: -14,
+    marginTop: -12,
     marginRight: layout.screenPadding,
-    marginBottom: 4,
-    paddingVertical: 4,
+    marginBottom: layout.space2,
+    paddingHorizontal: layout.space3,
+    paddingVertical: 7,
+    borderRadius: layout.radiusFull,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   clearAllLabel: {
-    fontSize: 12,
+    ...type.label,
     fontWeight: '700',
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   pressed: {
     opacity: 0.6,

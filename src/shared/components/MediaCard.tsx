@@ -1,12 +1,15 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { MediaSummary } from '../types/tmdb';
 import { buildPosterUrl } from '../utils/imageUrl';
 import { PosterImage } from './PosterImage';
+import { PressableScale } from './PressableScale';
 import { RatingBadge } from './RatingBadge';
+import { Scrim } from './Scrim';
 
 interface MediaCardProps {
   item: MediaSummary;
@@ -14,24 +17,26 @@ interface MediaCardProps {
   width?: number;
 }
 
-// Poster card for the carousels and grids. The score sits on the artwork so the
-// caption stays two lines of text.
+// Poster card for the carousels and grids. The artwork fades into the page along
+// its bottom edge, which gives the score chip something to sit on and keeps the
+// caption from floating. The score stays on the artwork so the caption is two
+// lines of text.
 export const MediaCard = ({ item, onPress, width = layout.posterCardWidth }: MediaCardProps) => {
   const posterHeight = Math.round(width * layout.posterAspect);
 
   return (
-    <Pressable
+    <PressableScale
       onPress={() => onPress(item)}
-      accessibilityRole="button"
       accessibilityLabel={`${item.title}, ${item.dateLabel}`}
-      style={({ pressed }) => [{ width }, pressed ? styles.pressed : null]}>
-      <View>
+      style={{ width }}>
+      <View style={[styles.artwork, { width, height: posterHeight }]}>
         <PosterImage
           uri={buildPosterUrl(item.posterPath, 'posterMedium')}
           width={width}
           height={posterHeight}
-          radius={layout.posterCardRadius}
+          radius={0}
         />
+        <Scrim height={Math.round(posterHeight * 0.5)} strength={0.85} />
         <View style={styles.badgeWrapper}>
           <RatingBadge value={item.voteAverage} />
         </View>
@@ -43,29 +48,29 @@ export const MediaCard = ({ item, onPress, width = layout.posterCardWidth }: Med
       <Text style={styles.caption} numberOfLines={1}>
         {item.dateLabel}
       </Text>
-    </Pressable>
+    </PressableScale>
   );
 };
 
 const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.7,
+  artwork: {
+    borderRadius: layout.posterCardRadius,
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
   },
   badgeWrapper: {
     position: 'absolute',
-    left: 6,
-    bottom: 6,
+    left: 8,
+    bottom: 8,
   },
   title: {
-    marginTop: 8,
-    fontSize: 13,
-    fontWeight: '700',
+    ...type.cardTitle,
+    marginTop: 10,
     color: colors.textPrimary,
-    lineHeight: 17,
   },
   caption: {
-    marginTop: 2,
-    fontSize: 11,
+    ...type.caps,
+    marginTop: 3,
     color: colors.textMuted,
   },
 });

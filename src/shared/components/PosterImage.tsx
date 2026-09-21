@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
+import { layout } from '../theme/layout';
 import { AppIcon } from './AppIcon';
 
 interface PosterImageProps {
@@ -14,12 +15,13 @@ interface PosterImageProps {
 }
 
 // Poster/portrait image with a placeholder for when the path is null or the
-// download fails.
+// download fails. The placeholder is a tonal surface rather than a hole, so an
+// un-arted title still reads as part of the grid.
 export const PosterImage = ({
   uri,
   width,
   height,
-  radius = 12,
+  radius = layout.posterCardRadius,
   fallbackLabel = 'No artwork',
 }: PosterImageProps) => {
   const [failedToLoad, setFailedToLoad] = useState(false);
@@ -27,7 +29,13 @@ export const PosterImage = ({
   if (!uri || failedToLoad) {
     return (
       <View style={[styles.placeholder, { width, height, borderRadius: radius }]}>
-        <AppIcon name="film" size={Math.max(16, Math.round(width * 0.2))} />
+        <View style={styles.placeholderIcon}>
+          <AppIcon
+            name="film"
+            size={Math.max(15, Math.round(width * 0.17))}
+            color={colors.textMuted}
+          />
+        </View>
         <Text style={styles.placeholderText} numberOfLines={2}>
           {fallbackLabel}
         </Text>
@@ -49,15 +57,24 @@ const styles = StyleSheet.create({
   placeholder: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    paddingHorizontal: 8,
-    backgroundColor: colors.surfaceElevated,
+    gap: 8,
+    paddingHorizontal: 10,
+    backgroundColor: colors.surfaceContainerHigh,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  placeholderIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceElevated,
   },
   placeholderText: {
     color: colors.textMuted,
     fontSize: 11,
+    fontWeight: '600',
     textAlign: 'center',
   },
 });

@@ -1,8 +1,11 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
+import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { AppIcon, IconName } from './AppIcon';
+import { PressableScale } from './PressableScale';
 
 interface StateViewProps {
   title: string;
@@ -29,11 +32,15 @@ export const StateView = ({
 }: StateViewProps) => {
   return (
     <View style={[styles.container, compact ? styles.compact : styles.full]}>
-      <View style={styles.iconCircle}>
+      <View style={[styles.iconCircle, compact ? styles.iconCircleCompact : null]}>
         {loading ? (
           <ActivityIndicator size="small" color={colors.primary} />
         ) : (
-          <AppIcon name={icon} size={compact ? 16 : 20} />
+          <AppIcon
+            name={icon}
+            size={compact ? 18 : 22}
+            color={compact ? colors.textSecondary : colors.primary}
+          />
         )}
       </View>
 
@@ -42,13 +49,10 @@ export const StateView = ({
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
 
       {actionLabel && onAction ? (
-        <Pressable
-          onPress={onAction}
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.button, pressed ? styles.buttonPressed : null]}>
-          <AppIcon name="refresh" size={13} color={colors.background} />
+        <PressableScale onPress={onAction} style={styles.button}>
+          <AppIcon name="refresh" size={15} color={colors.onPrimary} />
           <Text style={styles.buttonLabel}>{actionLabel}</Text>
-        </Pressable>
+        </PressableScale>
       ) : null}
     </View>
   );
@@ -58,8 +62,8 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingHorizontal: 24,
+    gap: layout.space2,
+    paddingHorizontal: layout.space6,
   },
   full: {
     flex: 1,
@@ -67,50 +71,52 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   compact: {
-    paddingVertical: 26,
+    paddingVertical: layout.space6,
   },
   iconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: layout.space2,
+  },
+  iconCircleCompact: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surfaceElevated,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 2,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '700',
+    ...type.title,
     color: colors.textPrimary,
     textAlign: 'center',
   },
   titleCompact: {
-    fontSize: 15,
+    ...type.titleSmall,
+    color: colors.textPrimary,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 13,
-    lineHeight: 19,
+    ...type.body,
     color: colors.textSecondary,
     textAlign: 'center',
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    borderRadius: 999,
+    gap: layout.space2,
+    marginTop: layout.space3,
+    paddingHorizontal: layout.space5,
+    height: 42,
+    borderRadius: layout.radiusFull,
     backgroundColor: colors.primary,
   },
-  buttonPressed: {
-    opacity: 0.75,
-  },
   buttonLabel: {
-    color: colors.background,
-    fontWeight: '800',
-    fontSize: 13,
+    ...type.labelLarge,
+    color: colors.onPrimary,
+    fontWeight: '700',
   },
 });

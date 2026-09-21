@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../app/navigation/types';
 import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { AppIcon } from './AppIcon';
+import { PressableScale } from './PressableScale';
 
 interface ScreenHeaderProps {
   title: string;
@@ -16,27 +18,26 @@ interface ScreenHeaderProps {
 }
 
 // The tabs' own headline. The navigator header is off, otherwise the same word
-// would show up twice on screen.
+// would show up twice on screen. The search affordance is a full-width pill
+// rather than an icon button, so the tap target matches what it opens.
 export const ScreenHeader = ({ title, subtitle, showSearch = true }: ScreenHeaderProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.textBlock}>
-        <Text style={styles.title}>{title}</Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-      </View>
+    <View style={[styles.container, { paddingTop: insets.top + layout.space2 }]}>
+      <Text style={styles.title}>{title}</Text>
+      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
 
       {showSearch ? (
-        <Pressable
+        <PressableScale
           onPress={() => navigation.navigate('Search')}
-          accessibilityRole="button"
           accessibilityLabel="Search movies, TV shows and people"
-          hitSlop={6}
-          style={({ pressed }) => [styles.searchButton, pressed ? styles.searchPressed : null]}>
-          <AppIcon name="search" size={18} />
-        </Pressable>
+          scaleTo={0.98}
+          style={styles.searchBar}>
+          <AppIcon name="search" size={18} color={colors.textMuted} />
+          <Text style={styles.searchHint}>Search movies, TV shows, people</Text>
+        </PressableScale>
       ) : null}
     </View>
   );
@@ -44,38 +45,32 @@ export const ScreenHeader = ({ title, subtitle, showSearch = true }: ScreenHeade
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: 12,
     paddingHorizontal: layout.screenPadding,
-    marginBottom: 20,
-  },
-  textBlock: {
-    flex: 1,
+    marginBottom: layout.space5,
   },
   title: {
-    fontSize: 26,
-    fontWeight: '800',
+    ...type.display,
     color: colors.textPrimary,
-    letterSpacing: 0.2,
   },
   subtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    color: colors.textSecondary,
+    ...type.label,
+    marginTop: layout.space1,
+    color: colors.textMuted,
   },
-  searchButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  searchBar: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surfaceElevated,
+    gap: layout.space2,
+    height: 46,
+    marginTop: layout.space4,
+    paddingHorizontal: layout.space3,
+    borderRadius: layout.radiusFull,
+    backgroundColor: colors.surfaceContainerHigh,
     borderWidth: 1,
     borderColor: colors.border,
   },
-  searchPressed: {
-    opacity: 0.7,
+  searchHint: {
+    ...type.body,
+    color: colors.textMuted,
   },
 });

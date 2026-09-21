@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   DarkTheme,
   NavigationContainer,
@@ -7,6 +7,7 @@ import {
 } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { findCategory } from '../../features/catalog/catalogConfig';
 import { CategoryListScreen } from '../../features/catalog/screens/CategoryListScreen';
@@ -22,6 +23,7 @@ import { useWatchlistPersistence } from '../../features/watchlist/useWatchlistPe
 import { AppIcon, IconName } from '../../shared/components/AppIcon';
 import { OfflineBanner } from '../../shared/components/OfflineBanner';
 import { colors } from '../../shared/theme/colors';
+import { type } from '../../shared/theme/typography';
 import { RootStackParamList, RootTabParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -47,33 +49,41 @@ const TAB_ICONS: Record<keyof RootTabParamList, IconName> = {
   WatchlistTab: 'bookmark',
 };
 
-const TabsNavigator = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      // tabs render their own headline, so a navigator header would repeat it
-      headerShown: false,
-      tabBarActiveTintColor: colors.primary,
-      tabBarInactiveTintColor: colors.textMuted,
-      tabBarStyle: styles.tabBar,
-      tabBarLabelStyle: styles.tabLabel,
-      tabBarIcon: ({ focused }) => (
-        <AppIcon
-          name={TAB_ICONS[route.name]}
-          size={19}
-          style={focused ? styles.tabIconActive : styles.tabIconIdle}
-        />
-      ),
-    })}>
-    <Tab.Screen name="MoviesTab" component={MoviesScreen} options={{ title: 'Movies' }} />
-    <Tab.Screen name="TvTab" component={TvShowsScreen} options={{ title: 'TV Shows' }} />
-    <Tab.Screen name="PeopleTab" component={PeopleScreen} options={{ title: 'People' }} />
-    <Tab.Screen
-      name="WatchlistTab"
-      component={WatchlistScreen}
-      options={{ title: 'Watchlist' }}
-    />
-  </Tab.Navigator>
-);
+const TAB_BAR_HEIGHT = 62;
+
+const TabsNavigator = () => {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        // tabs render their own headline, so a navigator header would repeat it
+        headerShown: false,
+        tabBarActiveTintColor: colors.onPrimaryContainer,
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarStyle: [
+          styles.tabBar,
+          // a custom height replaces the default one, inset included
+          { height: TAB_BAR_HEIGHT + insets.bottom, paddingBottom: insets.bottom + 6 },
+        ],
+        tabBarLabelStyle: styles.tabLabel,
+        tabBarIcon: ({ focused, color }) => (
+          <View style={[styles.iconPill, focused ? styles.iconPillActive : null]}>
+            <AppIcon name={TAB_ICONS[route.name]} size={21} color={color} />
+          </View>
+        ),
+      })}>
+      <Tab.Screen name="MoviesTab" component={MoviesScreen} options={{ title: 'Movies' }} />
+      <Tab.Screen name="TvTab" component={TvShowsScreen} options={{ title: 'TV Shows' }} />
+      <Tab.Screen name="PeopleTab" component={PeopleScreen} options={{ title: 'People' }} />
+      <Tab.Screen
+        name="WatchlistTab"
+        component={WatchlistScreen}
+        options={{ title: 'Watchlist' }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 export const RootNavigator = () => {
   // hydrate the watchlist from AsyncStorage, then write changes back
@@ -86,6 +96,7 @@ export const RootNavigator = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
+          animation: 'slide_from_right',
           contentStyle: { backgroundColor: colors.background },
         }}>
         <Stack.Screen name="Tabs" component={TabsNavigator} />
@@ -117,24 +128,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopColor: colors.border,
     borderTopWidth: 1,
-    height: 64,
-    paddingTop: 6,
+    height: 62,
+    paddingTop: 8,
   },
   tabLabel: {
     fontSize: 11,
     fontWeight: '700',
+    letterSpacing: 0.2,
   },
-  tabIconActive: {
-    opacity: 1,
+  // Material 3 navigation bar draws the active icon inside a tonal pill
+  iconPill: {
+    minWidth: 56,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  tabIconIdle: {
-    opacity: 0.45,
+  iconPillActive: {
+    backgroundColor: colors.primaryContainer,
   },
   header: {
     backgroundColor: colors.surface,
   },
   headerTitle: {
+    ...type.title,
     color: colors.textPrimary,
-    fontWeight: '800',
   },
 });

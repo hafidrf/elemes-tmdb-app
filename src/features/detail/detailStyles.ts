@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { colors } from '../../shared/theme/colors';
 import { layout } from '../../shared/theme/layout';
+import { type } from '../../shared/theme/typography';
 
 // Typography and spacing shared by the three detail screens. Only what actually
 // differs between them lives in the screens themselves.
@@ -11,88 +12,92 @@ export const detailStyles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
-    paddingBottom: 40,
+    paddingBottom: layout.space8,
   },
   body: {
     paddingHorizontal: layout.screenPadding,
-    marginTop: -30,
-    gap: 20,
+    marginTop: -34,
+    gap: layout.space5,
   },
   heroRow: {
     flexDirection: 'row',
-    gap: 14,
+    gap: layout.space4,
   },
   heroText: {
     flex: 1,
-    gap: 6,
+    gap: layout.space2,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
+    lineHeight: 30,
     fontWeight: '800',
+    letterSpacing: -0.4,
     color: colors.textPrimary,
-    lineHeight: 27,
   },
   originalTitle: {
-    fontSize: 13,
+    ...type.label,
     color: colors.textMuted,
     fontStyle: 'italic',
   },
   metaRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 2,
+    gap: layout.space2,
+  },
+  // small tonal chip for year, runtime, votes
+  metaChip: {
+    paddingHorizontal: layout.space2,
+    paddingVertical: 4,
+    borderRadius: layout.radiusXs,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   metaText: {
-    fontSize: 13,
-    fontWeight: '600',
+    ...type.caps,
     color: colors.textSecondary,
   },
   metaMuted: {
-    fontSize: 12,
+    ...type.label,
     color: colors.textMuted,
   },
   tagline: {
-    fontSize: 14,
+    ...type.bodyLarge,
     fontStyle: 'italic',
     color: colors.primary,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   block: {
-    gap: 8,
+    gap: layout.space3,
   },
   blockTitle: {
-    fontSize: 16,
-    fontWeight: '800',
+    ...type.title,
     color: colors.textPrimary,
   },
   overview: {
-    fontSize: 14,
-    lineHeight: 22,
+    ...type.bodyLarge,
     color: colors.textSecondary,
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: layout.space3,
   },
   statCard: {
     flex: 1,
-    gap: 2,
-    padding: 12,
-    borderRadius: 12,
+    gap: layout.space1,
+    padding: layout.space3,
+    borderRadius: layout.radiusMd,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
   },
   statValue: {
-    fontSize: 17,
-    fontWeight: '800',
+    ...type.titleLarge,
     color: colors.textPrimary,
   },
   statLabel: {
-    fontSize: 11,
+    ...type.caps,
     color: colors.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
 });

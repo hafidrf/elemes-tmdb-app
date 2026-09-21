@@ -1,13 +1,15 @@
 import React from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { CastMember } from '../types/tmdb';
 import { buildProfileUrl } from '../utils/imageUrl';
 import { PosterImage } from './PosterImage';
+import { PressableScale } from './PressableScale';
 
-const AVATAR_SIZE = 68;
+const AVATAR_SIZE = 72;
 
 interface CastRowProps {
   cast: CastMember[];
@@ -34,12 +36,12 @@ export const CastRow = ({ cast, onPressPerson }: CastRowProps) => {
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={Separator}
         renderItem={({ item }) => (
-          <Pressable
+          <PressableScale
             onPress={() => onPressPerson?.(item)}
             disabled={!onPressPerson}
-            accessibilityRole={onPressPerson ? 'button' : undefined}
             accessibilityLabel={item.name}
-            style={({ pressed }) => [styles.card, pressed && onPressPerson ? styles.pressed : null]}>
+            scaleTo={0.94}
+            style={styles.card}>
             <PosterImage
               uri={buildProfileUrl(item.profile_path)}
               width={AVATAR_SIZE}
@@ -55,7 +57,7 @@ export const CastRow = ({ cast, onPressPerson }: CastRowProps) => {
                 {item.character}
               </Text>
             ) : null}
-          </Pressable>
+          </PressableScale>
         )}
       />
     </View>
@@ -66,12 +68,11 @@ const Separator = () => <View style={styles.separator} />;
 
 const styles = StyleSheet.create({
   section: {
-    gap: 12,
+    gap: layout.space3,
   },
   heading: {
+    ...type.title,
     paddingHorizontal: layout.screenPadding,
-    fontSize: 16,
-    fontWeight: '800',
     color: colors.textPrimary,
   },
   listContent: {
@@ -81,22 +82,19 @@ const styles = StyleSheet.create({
     width: layout.gridGap,
   },
   card: {
-    width: AVATAR_SIZE + 12,
+    width: AVATAR_SIZE + layout.space3,
     alignItems: 'center',
-    gap: 4,
-  },
-  pressed: {
-    opacity: 0.7,
+    gap: layout.space1,
   },
   name: {
-    marginTop: 4,
-    fontSize: 12,
-    fontWeight: '700',
+    ...type.label,
+    marginTop: layout.space1,
     color: colors.textPrimary,
     textAlign: 'center',
   },
   character: {
-    fontSize: 11,
+    ...type.caps,
+    fontSize: 10,
     color: colors.textMuted,
     textAlign: 'center',
   },

@@ -94,7 +94,7 @@ export const TvDetailScreen = () => {
             uri={buildPosterUrl(detail.poster_path, 'posterLarge')}
             width={POSTER_WIDTH}
             height={Math.round(POSTER_WIDTH * layout.posterAspect)}
-            radius={12}
+            radius={layout.radiusMd}
           />
 
           <View style={styles.heroText}>
@@ -106,13 +106,23 @@ export const TvDetailScreen = () => {
 
             <View style={styles.metaRow}>
               <RatingBadge value={detail.vote_average} size="md" />
-              <Text style={styles.metaText}>{formatDateLabel(detail.first_air_date)}</Text>
-            </View>
 
-            <Text style={styles.metaText}>
-              {episodeRuntime ? `${formatRuntime(episodeRuntime)} / episode` : 'Runtime TBA'}
-              {detail.status ? ` · ${detail.status}` : ''}
-            </Text>
+              <View style={styles.metaChip}>
+                <Text style={styles.metaText}>{formatDateLabel(detail.first_air_date)}</Text>
+              </View>
+
+              <View style={styles.metaChip}>
+                <Text style={styles.metaText}>
+                  {episodeRuntime ? `${formatRuntime(episodeRuntime)} / episode` : 'Runtime TBA'}
+                </Text>
+              </View>
+
+              {detail.status ? (
+                <View style={styles.metaChip}>
+                  <Text style={styles.metaText}>{detail.status}</Text>
+                </View>
+              ) : null}
+            </View>
 
             <Text style={styles.metaMuted}>{formatCount(detail.vote_count)} TMDB votes</Text>
           </View>

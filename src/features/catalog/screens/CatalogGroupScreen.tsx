@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
-    paddingTop: layout.screenPadding,
-    paddingBottom: 8,
+    paddingBottom: layout.space2,
   },
 });

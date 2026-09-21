@@ -2,6 +2,8 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
+import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { AppIcon } from './AppIcon';
 
 interface StarRatingProps {
@@ -66,27 +68,24 @@ export const StarRating = ({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 6,
+    gap: layout.space2,
   },
   label: {
-    fontSize: 12,
-    fontWeight: '700',
+    ...type.caps,
     color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
   },
   stars: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: layout.space2,
   },
   pressed: {
     opacity: 0.6,
   },
   valueLabel: {
-    marginLeft: 6,
-    fontSize: 12,
-    fontWeight: '700',
+    ...type.label,
+    marginLeft: layout.space1,
     color: colors.textSecondary,
+    fontVariant: ['tabular-nums'],
   },
 });

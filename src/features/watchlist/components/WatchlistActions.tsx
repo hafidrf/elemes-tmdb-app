@@ -1,10 +1,13 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useAppDispatch, useAppSelector } from '../../../app/store/store';
 import { AppIcon } from '../../../shared/components/AppIcon';
+import { PressableScale } from '../../../shared/components/PressableScale';
 import { StarRating } from '../../../shared/components/StarRating';
 import { colors } from '../../../shared/theme/colors';
+import { layout } from '../../../shared/theme/layout';
+import { type } from '../../../shared/theme/typography';
 import { MediaSummary } from '../../../shared/types/tmdb';
 import {
   selectIsInWatchlist,
@@ -18,7 +21,8 @@ interface WatchlistActionsProps {
 }
 
 // watchlist button plus the user's own star rating. The stars only appear once
-// the title is saved, so browsing stays uncluttered.
+// the title is saved, so browsing stays uncluttered. The saved state drops to a
+// tonal button because the action is already done.
 export const WatchlistActions = ({ item }: WatchlistActionsProps) => {
   const dispatch = useAppDispatch();
   const isSaved = useAppSelector(state =>
@@ -30,24 +34,20 @@ export const WatchlistActions = ({ item }: WatchlistActionsProps) => {
 
   return (
     <View style={styles.container}>
-      <Pressable
+      <PressableScale
         onPress={() => dispatch(toggleWatchlist(item))}
-        accessibilityRole="button"
         accessibilityLabel={isSaved ? 'Remove from watchlist' : 'Add to watchlist'}
-        style={({ pressed }) => [
-          styles.button,
-          isSaved ? styles.buttonSaved : styles.buttonIdle,
-          pressed ? styles.pressed : null,
-        ]}>
+        scaleTo={0.98}
+        style={[styles.button, isSaved ? styles.buttonSaved : styles.buttonIdle]}>
         <AppIcon
-          name="bookmark"
-          size={16}
-          style={isSaved ? undefined : styles.buttonLabelIdle}
+          name={isSaved ? 'bookmarkFilled' : 'bookmark'}
+          size={18}
+          color={isSaved ? colors.onPrimaryContainer : colors.onPrimary}
         />
-        <Text style={isSaved ? styles.buttonLabelSaved : styles.buttonLabelIdle}>
+        <Text style={isSaved ? styles.labelSaved : styles.labelIdle}>
           {isSaved ? 'In Watchlist' : 'Add to Watchlist'}
         </Text>
-      </Pressable>
+      </PressableScale>
 
       {isSaved ? (
         <View style={styles.ratingBlock}>
@@ -72,42 +72,39 @@ export const WatchlistActions = ({ item }: WatchlistActionsProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
+    gap: layout.space3,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 13,
-    borderRadius: 12,
+    gap: layout.space2,
+    height: 50,
+    borderRadius: layout.radiusFull,
     borderWidth: 1,
   },
   buttonIdle: {
-    backgroundColor: colors.surfaceElevated,
-    borderColor: colors.border,
-  },
-  buttonSaved: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
-  pressed: {
-    opacity: 0.75,
+  buttonSaved: {
+    backgroundColor: colors.primaryContainer,
+    borderColor: colors.primary,
   },
-  buttonLabelIdle: {
-    color: colors.textPrimary,
+  labelIdle: {
+    ...type.labelLarge,
     fontWeight: '700',
-    fontSize: 14,
+    color: colors.onPrimary,
   },
-  buttonLabelSaved: {
-    color: colors.primary,
-    fontWeight: '800',
-    fontSize: 14,
+  labelSaved: {
+    ...type.labelLarge,
+    fontWeight: '700',
+    color: colors.onPrimaryContainer,
   },
   ratingBlock: {
-    padding: 14,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
+    padding: layout.space4,
+    borderRadius: layout.radiusLg,
+    backgroundColor: colors.surfaceContainerHigh,
     borderWidth: 1,
     borderColor: colors.border,
   },

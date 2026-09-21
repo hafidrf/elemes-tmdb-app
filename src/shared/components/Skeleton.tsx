@@ -5,21 +5,21 @@ import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
 
 const usePulse = () => {
-  const opacity = useRef(new Animated.Value(0.4)).current;
+  const opacity = useRef(new Animated.Value(0.45)).current;
 
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
+          toValue: 0.9,
+          duration: 780,
+          easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
+          toValue: 0.45,
+          duration: 780,
+          easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
       ]),

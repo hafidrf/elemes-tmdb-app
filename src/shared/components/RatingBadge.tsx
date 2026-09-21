@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
+import { layout } from '../theme/layout';
 import { formatRating } from '../utils/formatters';
 import { AppIcon } from './AppIcon';
 
@@ -10,29 +11,26 @@ interface RatingBadgeProps {
   size?: 'sm' | 'md';
 }
 
-// Score pill. Unrated titles show a muted "NR" instead of 0.0.
+// Score chip. It sits on top of artwork, so it is a dark glass pill with a
+// single amber star rather than a solid block of colour competing with the
+// poster. Unrated titles show a muted "NR" instead of 0.0.
 export const RatingBadge = ({ value, size = 'sm' }: RatingBadgeProps) => {
   const label = formatRating(value);
   const isRated = label !== 'NR';
   const isLarge = size === 'md';
 
   return (
-    <View
-      style={[
-        styles.badge,
-        isLarge ? styles.badgeLarge : styles.badgeSmall,
-        isRated ? styles.badgeRated : styles.badgeUnrated,
-      ]}>
+    <View style={[styles.badge, isLarge ? styles.badgeLarge : styles.badgeSmall]}>
       <AppIcon
         name={isRated ? 'star' : 'starOutline'}
-        size={isLarge ? 13 : 11}
-        color={isRated ? colors.background : colors.textSecondary}
+        size={isLarge ? 13 : 10}
+        color={isRated ? colors.primary : colors.textMuted}
       />
       <Text
         style={[
           styles.label,
           isLarge ? styles.labelLarge : styles.labelSmall,
-          { color: isRated ? colors.background : colors.textSecondary },
+          { color: isRated ? colors.textPrimary : colors.textMuted },
         ]}>
         {label}
       </Text>
@@ -44,8 +42,11 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    borderRadius: 999,
+    gap: 3,
+    borderRadius: layout.radiusFull,
+    backgroundColor: colors.glassStrong,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
   },
   badgeSmall: {
     paddingHorizontal: 7,
@@ -55,17 +56,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  badgeRated: {
-    backgroundColor: colors.primary,
-  },
-  badgeUnrated: {
-    backgroundColor: colors.surfaceElevated,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
   label: {
-    fontWeight: '800',
-    letterSpacing: 0.2,
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+    letterSpacing: 0.1,
   },
   labelSmall: {
     fontSize: 11,

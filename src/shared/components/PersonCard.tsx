@@ -1,11 +1,13 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { PersonSummary } from '../types/tmdb';
 import { buildProfileUrl } from '../utils/imageUrl';
 import { PosterImage } from './PosterImage';
+import { PressableScale } from './PressableScale';
 
 interface PersonCardProps {
   person: PersonSummary;
@@ -18,16 +20,14 @@ export const PersonCard = ({ person, onPress, width }: PersonCardProps) => {
   const portraitHeight = Math.round(width * layout.profileAspect);
 
   return (
-    <Pressable
+    <PressableScale
       onPress={() => onPress(person)}
-      accessibilityRole="button"
       accessibilityLabel={person.name}
-      style={({ pressed }) => [{ width }, pressed ? styles.pressed : null]}>
+      style={{ width }}>
       <PosterImage
         uri={buildProfileUrl(person.profilePath)}
         width={width}
         height={portraitHeight}
-        radius={layout.posterCardRadius}
         fallbackLabel="No photo"
       />
       <Text style={styles.name} numberOfLines={1}>
@@ -36,23 +36,20 @@ export const PersonCard = ({ person, onPress, width }: PersonCardProps) => {
       <Text style={styles.knownFor} numberOfLines={1}>
         {person.knownFor}
       </Text>
-    </Pressable>
+    </PressableScale>
   );
 };
 
 const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.7,
-  },
   name: {
-    marginTop: 8,
-    fontSize: 13,
-    fontWeight: '700',
+    ...type.cardTitle,
+    marginTop: layout.space3,
     color: colors.textPrimary,
   },
   knownFor: {
+    ...type.caps,
+    fontSize: 10,
     marginTop: 2,
-    fontSize: 11,
     color: colors.textMuted,
   },
 });

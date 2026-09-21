@@ -94,7 +94,7 @@ export const MovieDetailScreen = () => {
             uri={buildPosterUrl(detail.poster_path, 'posterLarge')}
             width={POSTER_WIDTH}
             height={Math.round(POSTER_WIDTH * layout.posterAspect)}
-            radius={12}
+            radius={layout.radiusMd}
           />
 
           <View style={styles.heroText}>
@@ -106,13 +106,23 @@ export const MovieDetailScreen = () => {
 
             <View style={styles.metaRow}>
               <RatingBadge value={detail.vote_average} size="md" />
-              <Text style={styles.metaText}>{formatDateLabel(detail.release_date)}</Text>
-            </View>
 
-            <Text style={styles.metaText}>
-              {formatRuntime(detail.runtime)}
-              {detail.status ? ` · ${detail.status}` : ''}
-            </Text>
+              <View style={styles.metaChip}>
+                <Text style={styles.metaText}>{formatDateLabel(detail.release_date)}</Text>
+              </View>
+
+              {detail.runtime ? (
+                <View style={styles.metaChip}>
+                  <Text style={styles.metaText}>{formatRuntime(detail.runtime)}</Text>
+                </View>
+              ) : null}
+
+              {detail.status ? (
+                <View style={styles.metaChip}>
+                  <Text style={styles.metaText}>{detail.status}</Text>
+                </View>
+              ) : null}
+            </View>
 
             <Text style={styles.metaMuted}>{formatCount(detail.vote_count)} TMDB votes</Text>
           </View>

@@ -1,11 +1,13 @@
 import React from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
+import { type } from '../theme/typography';
 import { MediaSummary } from '../types/tmdb';
 import { AppIcon } from './AppIcon';
 import { MediaCard } from './MediaCard';
+import { PressableScale } from './PressableScale';
 import { SkeletonRow } from './Skeleton';
 import { StateView } from './StateView';
 
@@ -20,7 +22,7 @@ interface SectionCarouselProps {
   onPressItem: (item: MediaSummary) => void;
 }
 
-// One shelf: heading, optional "See All", then the posters. The heading renders
+// One shelf: heading, the "See all" pill, then the posters. The heading renders
 // straight away, only the body swaps between skeleton, error, empty and cards.
 export const SectionCarousel = ({
   title,
@@ -45,14 +47,15 @@ export const SectionCarousel = ({
         </View>
 
         {onSeeAll ? (
-          <Pressable
+          <PressableScale
             onPress={onSeeAll}
-            accessibilityRole="button"
             accessibilityLabel={`See all ${title}`}
-            style={({ pressed }) => [styles.seeAll, pressed ? styles.seeAllPressed : null]}>
-            <Text style={styles.seeAllLabel}>See All</Text>
-            <AppIcon name="chevronRight" size={18} color={colors.primary} />
-          </Pressable>
+            hitSlop={6}
+            scaleTo={0.94}
+            style={styles.seeAll}>
+            <Text style={styles.seeAllLabel}>See all</Text>
+            <AppIcon name="chevronRight" size={14} color={colors.primary} />
+          </PressableScale>
         ) : null}
       </View>
 
@@ -101,39 +104,40 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: layout.screenPadding,
-    marginBottom: 12,
-    gap: 12,
+    marginBottom: layout.space3,
+    gap: layout.space3,
   },
   headingText: {
     flex: 1,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '800',
+    ...type.titleLarge,
     color: colors.textPrimary,
-    letterSpacing: 0.2,
   },
   subtitle: {
-    marginTop: 2,
-    fontSize: 12,
+    ...type.label,
+    marginTop: 3,
     color: colors.textMuted,
   },
   seeAll: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
-    paddingVertical: 2,
-  },
-  seeAllPressed: {
-    opacity: 0.6,
+    paddingLeft: layout.space3,
+    paddingRight: layout.space2,
+    paddingVertical: 7,
+    borderRadius: layout.radiusFull,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   seeAllLabel: {
-    fontSize: 13,
-    fontWeight: '700',
+    ...type.label,
     color: colors.primary,
+    fontWeight: '700',
   },
   listContent: {
     paddingHorizontal: layout.screenPadding,

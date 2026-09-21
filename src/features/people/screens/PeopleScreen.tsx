@@ -57,9 +57,7 @@ export const PeopleScreen = () => {
   if (isInitialLoading) {
     return (
       <View style={styles.screen}>
-        <View style={styles.headerSpacing}>
-          <ScreenHeader title={HEADING} subtitle={SUBHEADING} />
-        </View>
+        <ScreenHeader title={HEADING} subtitle={SUBHEADING} />
         <View style={styles.skeletonGrid}>
           {skeletons.map(index => (
             <PosterSkeleton key={index} width={cardWidth} />
@@ -72,9 +70,7 @@ export const PeopleScreen = () => {
   if (isError && items.length === 0) {
     return (
       <View style={styles.screen}>
-        <View style={styles.headerSpacing}>
-          <ScreenHeader title={HEADING} subtitle={SUBHEADING} />
-        </View>
+        <ScreenHeader title={HEADING} subtitle={SUBHEADING} />
         <StateView
           icon="warning"
           title="Couldn't load people"
@@ -131,9 +127,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  headerSpacing: {
-    paddingTop: layout.screenPadding,
-  },
   skeletonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -145,11 +138,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPadding,
   },
   listContent: {
-    paddingTop: layout.screenPadding,
-    paddingBottom: 24,
-    gap: 18,
+    paddingBottom: layout.space6,
+    gap: layout.space5,
   },
   footer: {
-    paddingVertical: 18,
+    paddingVertical: layout.space5,
   },
 });

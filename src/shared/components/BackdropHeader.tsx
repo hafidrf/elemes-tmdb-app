@@ -3,21 +3,23 @@ import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '../theme/colors';
+import { layout } from '../theme/layout';
 import { buildBackdropUrl } from '../utils/imageUrl';
 import { BackButton } from './BackButton';
+import { Scrim } from './Scrim';
 
 interface BackdropHeaderProps {
   backdropPath: string | null;
   onBack: () => void;
 }
 
-// Full-width backdrop with a floating back button. RN has no gradient, so the
-// fade down into the page is three stacked bands of the background colour at
-// increasing opacity.
+// Full-width backdrop with a floating back button. The artwork fades into the
+// page along the bottom and darkens behind the top bar, which is what keeps the
+// back button readable over a bright still.
 export const BackdropHeader = ({ backdropPath, onBack }: BackdropHeaderProps) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const height = Math.round(width * 0.58);
+  const height = Math.round(width * 0.62);
   const uri = buildBackdropUrl(backdropPath);
 
   return (
@@ -28,20 +30,16 @@ export const BackdropHeader = ({ backdropPath, onBack }: BackdropHeaderProps) =>
         <View style={styles.fallback} />
       )}
 
-      <View style={[styles.topScrim, { height: insets.top + 72 }]} />
+      <Scrim height={Math.round(height * 0.62)} strength={1} steps={14} />
+      <Scrim
+        edge="top"
+        height={insets.top + 88}
+        strength={0.7}
+        steps={8}
+        style={styles.topScrim}
+      />
 
-      <View
-        style={[styles.band, styles.bandSoft, { height: height * 0.22, bottom: height * 0.28 }]}
-      />
-      <View
-        style={[styles.band, styles.bandMedium, { height: height * 0.3, bottom: height * 0.1 }]}
-      />
-      <View style={[styles.band, styles.bandBase, { height: height * 0.22 }]} />
-
-      <BackButton
-        onPress={onBack}
-        style={[styles.backButton, { top: insets.top + 8 }]}
-      />
+      <BackButton onPress={onBack} style={[styles.backButton, { top: insets.top + 8 }]} />
     </View>
   );
 };
@@ -63,33 +61,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: colors.surfaceElevated,
+    backgroundColor: colors.surfaceContainerHigh,
   },
   topScrim: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(6, 8, 11, 0.55)',
-  },
-  band: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    backgroundColor: colors.background,
-  },
-  bandSoft: {
-    opacity: 0.3,
-  },
-  bandMedium: {
-    opacity: 0.6,
-  },
-  bandBase: {
-    opacity: 0.95,
-    bottom: 0,
+    opacity: 0.9,
   },
   backButton: {
     position: 'absolute',
-    left: 16,
+    left: layout.screenPadding,
   },
 });

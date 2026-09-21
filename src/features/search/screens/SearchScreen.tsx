@@ -22,6 +22,7 @@ import { StateView } from '../../../shared/components/StateView';
 import { useDebouncedValue } from '../../../shared/hooks/useDebouncedValue';
 import { colors } from '../../../shared/theme/colors';
 import { layout } from '../../../shared/theme/layout';
+import { type } from '../../../shared/theme/typography';
 import { CatalogRow } from '../../../shared/types/catalogRow';
 import { MediaSummary, PersonSummary, SearchResult } from '../../../shared/types/tmdb';
 import { toMediaSummary, toPersonSummary } from '../../../shared/utils/formatters';
@@ -128,11 +129,11 @@ export const SearchScreen = () => {
   const skeletons = useMemo(() => Array.from({ length: 4 }, (_, index) => index), []);
 
   const header = (
-    <View style={[styles.searchBar, { paddingTop: insets.top + 8 }]}>
+    <View style={[styles.searchBar, { paddingTop: insets.top + layout.space2 }]}>
       <BackButton onPress={() => navigation.goBack()} />
 
       <View style={styles.inputWrapper}>
-        <AppIcon name="search" size={14} />
+        <AppIcon name="search" size={17} color={colors.textMuted} />
 
         <TextInput
           value={query}
@@ -152,7 +153,7 @@ export const SearchScreen = () => {
             accessibilityRole="button"
             accessibilityLabel="Clear search"
             hitSlop={8}>
-            <AppIcon name="close" size={14} color={colors.textSecondary} />
+            <AppIcon name="close" size={16} color={colors.textSecondary} />
           </Pressable>
         ) : null}
       </View>
@@ -246,26 +247,26 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: layout.space3,
     paddingHorizontal: layout.screenPadding,
-    paddingBottom: 14,
+    paddingBottom: layout.space3,
   },
   inputWrapper: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    height: 40,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    backgroundColor: colors.surfaceElevated,
+    gap: layout.space2,
+    height: 46,
+    paddingHorizontal: layout.space3,
+    borderRadius: layout.radiusFull,
+    backgroundColor: colors.surfaceContainerHigh,
     borderWidth: 1,
     borderColor: colors.border,
   },
   input: {
     flex: 1,
     padding: 0,
-    fontSize: 14,
+    ...type.body,
     color: colors.textPrimary,
   },
   skeletonGrid: {
@@ -279,10 +280,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPadding,
   },
   listContent: {
-    paddingBottom: 32,
-    gap: 18,
+    paddingBottom: layout.space8,
+    gap: layout.space5,
   },
   footer: {
-    paddingVertical: 18,
+    paddingVertical: layout.space4,
   },
 });
