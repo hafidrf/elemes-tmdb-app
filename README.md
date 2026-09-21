@@ -163,7 +163,12 @@ The other things the brief asks for:
   alongside it.
 - **Error and empty states.** One `StateView` component. The error state always has a Retry
   button, so a failed request never leaves a blank screen.
-- Also: pull to refresh, infinite scroll, and an offline banner.
+- **Pull to refresh, wired to something real on every list.** The lists that come from TMDB refetch
+  from TMDB. The watchlist is the odd one out: it holds what this app saved rather than server data,
+  so its pull re-reads each saved title's detail from TMDB and rewrites the stored snapshot. That is
+  what lets a score which has moved since the title was saved catch up. The user's own star rating
+  and the original save order are left alone.
+- Also: infinite scroll and an offline banner.
 
 ## Design
 
@@ -312,6 +317,9 @@ FastImage to `__mocks__/fastImageMock.js` so a native view never has to resolve.
    only drives the spinner. The single-list screens use real fetch state.
 6. **`.env` is required.** Without it the app still starts, every request fails, and you land on the
    error state with a Retry button instead of a crash.
+7. **The watchlist refresh sends one detail request per saved title.** TMDB has no batch endpoint for
+   this, so a 30 title watchlist means 30 parallel requests. Fine at that size, and each response is
+   only a few KB, but a much longer list would want a concurrency cap.
 
 ### How it was verified live
 
@@ -323,6 +331,8 @@ arm64-v8a. On the device:
 - a search for "batman" returning mixed results from `/search/multi`
 - the See All grid, opened from a shelf
 - the watchlist still holding both titles and the 4 star rating after a force-stop and relaunch
+- a pull on the watchlist issuing one detail request per saved title (2 titles, 2 requests) and
+  writing both refreshed snapshots back, read off the device log while this was being checked
 
 `gradlew assembleDebug` and `gradlew assembleRelease` both completed, and the tests, lint and type
 checks above are green.
