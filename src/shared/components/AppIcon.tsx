@@ -17,7 +17,6 @@ export type IconName =
   | 'search'
   | 'star'
   | 'starOutline'
-  | 'play'
   | 'close'
   | 'chevronRight'
   | 'chevronLeft'
@@ -34,7 +33,6 @@ const GLYPHS: Record<IconName, string> = {
   search: '🔍',
   star: '★',
   starOutline: '☆',
-  play: '▶',
   close: '✕',
   chevronRight: '›',
   chevronLeft: '‹',

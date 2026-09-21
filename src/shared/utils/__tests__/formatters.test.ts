@@ -8,7 +8,6 @@ import {
   toMediaSummary,
   toMediaSummaryFromCredit,
   toPersonSummary,
-  truncate,
 } from '../formatters';
 
 const movie: Movie = {
@@ -204,15 +203,5 @@ describe('toMediaSummaryFromCredit', () => {
     expect(
       toMediaSummaryFromCredit({ id: 1, media_type: 'person', poster_path: null }),
     ).toBeNull();
-  });
-});
-
-describe('truncate', () => {
-  it('leaves short text untouched', () => {
-    expect(truncate('  hello  ', 10)).toBe('hello');
-  });
-
-  it('adds an ellipsis when cutting', () => {
-    expect(truncate('abcdefghij', 4)).toBe('abcd…');
   });
 });

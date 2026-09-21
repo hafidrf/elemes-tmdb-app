@@ -8,5 +8,3 @@ import { MediaSummary, PersonSummary } from './tmdb';
 export type CatalogRow =
   | { kind: 'media'; item: MediaSummary }
   | { kind: 'person'; item: PersonSummary };
-
-export type { MediaSummary, PersonSummary };

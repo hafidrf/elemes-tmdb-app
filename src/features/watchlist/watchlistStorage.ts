@@ -51,7 +51,3 @@ export const loadWatchlist = async (): Promise<WatchlistEntry[]> => {
 export const saveWatchlist = async (entries: WatchlistEntry[]): Promise<void> => {
   await AsyncStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(entries));
 };
-
-export const clearStoredWatchlist = async (): Promise<void> => {
-  await AsyncStorage.removeItem(WATCHLIST_STORAGE_KEY);
-};

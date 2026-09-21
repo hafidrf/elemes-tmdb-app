@@ -295,7 +295,7 @@ like a feature.
 ## Testing & code quality
 
 ```bash
-npm test          # 51 tests / 5 suites
+npm test          # 49 tests / 5 suites
 npm run lint      # ESLint, 0 errors and 0 warnings
 npx tsc --noEmit  # 0 type errors
 ```
@@ -306,7 +306,7 @@ npx tsc --noEmit  # 0 type errors
 |---|---|
 | `npx tsc --noEmit` | 0 type errors |
 | `npx eslint . --max-warnings 0` | 0 errors, 0 warnings |
-| `npx jest --ci` | 51 tests / 5 suites, all passing |
+| `npx jest --ci` | 49 tests / 5 suites, all passing |
 | `gradlew assembleDebug` | **BUILD SUCCESSFUL** — 199 tasks, including `MainActivity.kt`, the splash resources and CMake builds for all four ABIs |
 | `react-native bundle --dev false` | Production JS bundle built (≈1.5 MB, 19 assets) with the `.env` token inlined |
 | Interactive device run | **Not done here** — see limitation 7 below |

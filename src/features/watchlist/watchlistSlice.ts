@@ -28,6 +28,42 @@ const initialState: WatchlistState = {
 
 const entryKey = (id: number, mediaType: WatchableMediaType): string => `${mediaType}-${id}`;
 
+/** Single place that knows how an entry is shaped and inserted. */
+const insertEntry = (state: WatchlistState, item: MediaSummary): void => {
+  const key = entryKey(item.id, item.mediaType);
+
+  if (state.entries.some(entry => entryKey(entry.id, entry.mediaType) === key)) {
+    return;
+  }
+
+  state.entries.unshift({
+    id: item.id,
+    mediaType: item.mediaType,
+    title: item.title,
+    posterPath: item.posterPath,
+    voteAverage: item.voteAverage,
+    dateLabel: item.dateLabel,
+    userRating: 0,
+    addedAt: Date.now(),
+  });
+};
+
+const removeEntry = (
+  state: WatchlistState,
+  id: number,
+  mediaType: WatchableMediaType,
+): void => {
+  const key = entryKey(id, mediaType);
+  state.entries = state.entries.filter(
+    entry => entryKey(entry.id, entry.mediaType) !== key,
+  );
+};
+
+const containsEntry = (state: WatchlistState, item: MediaSummary): boolean => {
+  const key = entryKey(item.id, item.mediaType);
+  return state.entries.some(entry => entryKey(entry.id, entry.mediaType) === key);
+};
+
 export const watchlistSlice = createSlice({
   name: 'watchlist',
   initialState,
@@ -37,59 +73,21 @@ export const watchlistSlice = createSlice({
       state.hydrated = true;
     },
     addToWatchlist: (state, action: PayloadAction<MediaSummary>) => {
-      const item = action.payload;
-      const exists = state.entries.some(
-        entry => entryKey(entry.id, entry.mediaType) === entryKey(item.id, item.mediaType),
-      );
-
-      if (exists) {
-        return;
-      }
-
-      state.entries.unshift({
-        id: item.id,
-        mediaType: item.mediaType,
-        title: item.title,
-        posterPath: item.posterPath,
-        voteAverage: item.voteAverage,
-        dateLabel: item.dateLabel,
-        userRating: 0,
-        addedAt: Date.now(),
-      });
+      insertEntry(state, action.payload);
     },
     removeFromWatchlist: (
       state,
       action: PayloadAction<{ id: number; mediaType: WatchableMediaType }>,
     ) => {
-      const key = entryKey(action.payload.id, action.payload.mediaType);
-      state.entries = state.entries.filter(
-        entry => entryKey(entry.id, entry.mediaType) !== key,
-      );
+      removeEntry(state, action.payload.id, action.payload.mediaType);
     },
     toggleWatchlist: (state, action: PayloadAction<MediaSummary>) => {
-      const item = action.payload;
-      const key = entryKey(item.id, item.mediaType);
-      const exists = state.entries.some(
-        entry => entryKey(entry.id, entry.mediaType) === key,
-      );
-
-      if (exists) {
-        state.entries = state.entries.filter(
-          entry => entryKey(entry.id, entry.mediaType) !== key,
-        );
+      if (containsEntry(state, action.payload)) {
+        removeEntry(state, action.payload.id, action.payload.mediaType);
         return;
       }
 
-      state.entries.unshift({
-        id: item.id,
-        mediaType: item.mediaType,
-        title: item.title,
-        posterPath: item.posterPath,
-        voteAverage: item.voteAverage,
-        dateLabel: item.dateLabel,
-        userRating: 0,
-        addedAt: Date.now(),
-      });
+      insertEntry(state, action.payload);
     },
     setUserRating: (
       state,
