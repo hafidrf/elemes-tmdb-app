@@ -325,6 +325,10 @@ FastImage to `__mocks__/fastImageMock.js` so a native view never has to resolve.
 7. **The watchlist refresh sends one detail request per saved title.** TMDB has no batch endpoint for
    this, so a 30 title watchlist means 30 parallel requests. Fine at that size, and each response is
    only a few KB, but a much longer list would want a concurrency cap.
+8. **`npm audit` reports 7 moderate advisories, all from one package.** They come from
+   `fast-xml-parser`, which arrives under `@react-native-community/cli` — build tooling that runs on
+   your machine and is never bundled into the app. `npm audit fix --force` resolves them by installing
+   a CLI major outside the range React Native 0.85 declares, so it was left alone on purpose.
 
 ### How it was verified live
 
