@@ -106,6 +106,28 @@ export const watchlistSlice = createSlice({
         entry.userRating = Math.min(5, Math.max(0, Math.round(userRating)));
       }
     },
+    // Pull-to-refresh writes back what TMDB reports today for titles already
+    // saved. It only touches the snapshot fields: the user's own rating and the
+    // original addedAt survive, because refreshing should never cost someone a
+    // rating. Ids that come back empty are left exactly as they were.
+    applyRefreshedSnapshots: (state, action: PayloadAction<MediaSummary[]>) => {
+      const fresh = new Map(
+        action.payload.map(item => [entryKey(item.id, item.mediaType), item]),
+      );
+
+      state.entries.forEach(entry => {
+        const updated = fresh.get(entryKey(entry.id, entry.mediaType));
+
+        if (!updated) {
+          return;
+        }
+
+        entry.title = updated.title;
+        entry.posterPath = updated.posterPath;
+        entry.voteAverage = updated.voteAverage;
+        entry.dateLabel = updated.dateLabel;
+      });
+    },
     clearWatchlist: state => {
       state.entries = [];
     },
@@ -113,6 +135,7 @@ export const watchlistSlice = createSlice({
 });
 
 export const {
+  applyRefreshedSnapshots,
   hydrateWatchlist,
   addToWatchlist,
   removeFromWatchlist,

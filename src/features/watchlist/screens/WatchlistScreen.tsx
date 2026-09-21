@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
   FlatList,
   Pressable,
@@ -20,34 +20,21 @@ import { layout } from '../../../shared/theme/layout';
 import { type } from '../../../shared/theme/typography';
 import { MediaSummary } from '../../../shared/types/tmdb';
 import { WatchlistCard } from '../components/WatchlistCard';
+import { useWatchlistRefresh } from '../useWatchlistRefresh';
 import {
   clearWatchlist,
-  hydrateWatchlist,
   removeFromWatchlist,
   selectWatchlistEntries,
   setUserRating,
   WatchlistEntry,
 } from '../watchlistSlice';
-import { loadWatchlist } from '../watchlistStorage';
 
 export const WatchlistScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const entries = useAppSelector(selectWatchlistEntries);
-
-  // The watchlist is local, so a pull re-reads it from AsyncStorage instead of
-  // refetching anything over the network. It is the honest refresh here: it
-  // picks up whatever is actually on the device.
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    loadWatchlist()
-      .then(stored => dispatch(hydrateWatchlist(stored)))
-      .catch(() => undefined)
-      .finally(() => setRefreshing(false));
-  }, [dispatch]);
+  const { refresh, isRefreshing } = useWatchlistRefresh();
 
   const cardWidth = Math.floor((width - layout.screenPadding * 2 - layout.gridGap) / 2);
 
@@ -129,8 +116,8 @@ export const WatchlistScreen = () => {
         windowSize={7}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
+            refreshing={isRefreshing}
+            onRefresh={refresh}
             tintColor={colors.primary}
             colors={[colors.primary]}
             progressBackgroundColor={colors.surfaceElevated}

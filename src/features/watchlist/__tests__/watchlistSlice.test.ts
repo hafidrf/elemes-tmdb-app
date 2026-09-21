@@ -1,5 +1,6 @@
 import { MediaSummary } from '../../../shared/types/tmdb';
 import {
+  applyRefreshedSnapshots,
   addToWatchlist,
   clearWatchlist,
   hydrateWatchlist,
@@ -136,5 +137,52 @@ describe('watchlistSlice', () => {
     const saved = watchlistReducer(hydratedEmpty, addToWatchlist(movie));
 
     expect(watchlistReducer(saved, clearWatchlist()).entries).toHaveLength(0);
+  });
+
+  it('refreshes the snapshot fields from TMDB', () => {
+    const saved = watchlistReducer(hydratedEmpty, addToWatchlist(movie));
+
+    const state = watchlistReducer(
+      saved,
+      applyRefreshedSnapshots([
+        { ...movie, title: 'Fight Club', voteAverage: 8.6, dateLabel: '16 Oct 1999' },
+      ]),
+    );
+
+    expect(state.entries[0]).toMatchObject({
+      title: 'Fight Club',
+      voteAverage: 8.6,
+      dateLabel: '16 Oct 1999',
+    });
+  });
+
+  it('keeps the user rating and the original addedAt through a refresh', () => {
+    const saved = watchlistReducer(hydratedEmpty, addToWatchlist(movie));
+    const rated = watchlistReducer(
+      saved,
+      setUserRating({ id: 550, mediaType: 'movie', userRating: 4 }),
+    );
+    const addedAt = rated.entries[0].addedAt;
+
+    const state = watchlistReducer(
+      rated,
+      applyRefreshedSnapshots([{ ...movie, voteAverage: 8.6 }]),
+    );
+
+    expect(state.entries[0].userRating).toBe(4);
+    expect(state.entries[0].addedAt).toBe(addedAt);
+  });
+
+  it('leaves an entry alone when the refresh did not return it', () => {
+    const saved = watchlistReducer(hydratedEmpty, addToWatchlist(movie));
+
+    // same id, different media type, so it keys to a different entry
+    const state = watchlistReducer(
+      saved,
+      applyRefreshedSnapshots([{ ...show, title: 'Some other show' }]),
+    );
+
+    expect(state.entries[0].title).toBe('Fight Club');
+    expect(state.entries[0].voteAverage).toBe(8.4);
   });
 });
