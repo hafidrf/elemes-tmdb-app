@@ -141,6 +141,14 @@ export const CategoryListScreen = () => {
         }
         onEndReached={hasMore ? loadMore : undefined}
         onEndReachedThreshold={0.5}
+        // This grid mixes posters and portrait cards, and a poster title can wrap
+        // to two lines while a name does not, so row heights are not constant and
+        // getItemLayout would report the wrong offsets. The window sizes below
+        // trim the mount cost instead, which is what actually shows up while paging.
+        removeClippedSubviews
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={7}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

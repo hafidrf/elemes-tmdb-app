@@ -186,6 +186,10 @@ export const PersonDetailScreen = () => {
           />
         }
         showsVerticalScrollIndicator={false}
+        removeClippedSubviews
+        initialNumToRender={4}
+        maxToRenderPerBatch={4}
+        windowSize={5}
       />
     </View>
   );

@@ -107,6 +107,10 @@ export const PeopleScreen = () => {
         }
         onEndReached={hasMore ? loadMore : undefined}
         onEndReachedThreshold={0.5}
+        removeClippedSubviews
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={7}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

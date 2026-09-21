@@ -90,6 +90,17 @@ export const SectionCarousel = ({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
           ItemSeparatorComponent={Separator}
+          // every card is the same width and the separator is a fixed gap, so the
+          // offset of any index is known without measuring anything. That removes
+          // the layout pass a horizontal list otherwise needs before it can scroll.
+          getItemLayout={(_, index) => ({
+            length: layout.posterCardWidth,
+            offset: (layout.posterCardWidth + layout.gridGap) * index,
+            index,
+          })}
+          initialNumToRender={4}
+          maxToRenderPerBatch={4}
+          windowSize={5}
         />
       ) : null}
     </View>
