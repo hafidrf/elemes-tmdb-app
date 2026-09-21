@@ -1,5 +1,13 @@
-import React, { useCallback } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -14,17 +22,32 @@ import { MediaSummary } from '../../../shared/types/tmdb';
 import { WatchlistCard } from '../components/WatchlistCard';
 import {
   clearWatchlist,
+  hydrateWatchlist,
   removeFromWatchlist,
   selectWatchlistEntries,
   setUserRating,
   WatchlistEntry,
 } from '../watchlistSlice';
+import { loadWatchlist } from '../watchlistStorage';
 
 export const WatchlistScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const entries = useAppSelector(selectWatchlistEntries);
+
+  // The watchlist is local, so a pull re-reads it from AsyncStorage instead of
+  // refetching anything over the network. It is the honest refresh here: it
+  // picks up whatever is actually on the device.
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadWatchlist()
+      .then(stored => dispatch(hydrateWatchlist(stored)))
+      .catch(() => undefined)
+      .finally(() => setRefreshing(false));
+  }, [dispatch]);
 
   const cardWidth = Math.floor((width - layout.screenPadding * 2 - layout.gridGap) / 2);
 
@@ -100,6 +123,19 @@ export const WatchlistScreen = () => {
           />
         }
         showsVerticalScrollIndicator={false}
+        removeClippedSubviews
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={7}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+            progressBackgroundColor={colors.surfaceElevated}
+          />
+        }
       />
     </View>
   );

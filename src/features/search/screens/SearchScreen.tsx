@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  RefreshControl,
   StyleSheet,
   TextInput,
   View,
@@ -106,6 +107,21 @@ export const SearchScreen = () => {
 
     setPage(current => current + 1);
   }, [hasMore, isFetching]);
+
+  // A pull on the results re-runs the query for the page you are on; it does not
+  // reset paging, so pulling after scrolling deep keeps you where you were.
+  const [manualRefresh, setManualRefresh] = useState(false);
+
+  useEffect(() => {
+    if (manualRefresh && !isFetching) {
+      setManualRefresh(false);
+    }
+  }, [isFetching, manualRefresh]);
+
+  const handleRefresh = useCallback(() => {
+    setManualRefresh(true);
+    refetch();
+  }, [refetch]);
 
   const handlePressMedia = useCallback(
     (item: MediaSummary) => {
@@ -232,8 +248,21 @@ export const SearchScreen = () => {
         }
         onEndReached={hasMore ? loadMore : undefined}
         onEndReachedThreshold={0.5}
+        removeClippedSubviews
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={7}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={manualRefresh}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+            progressBackgroundColor={colors.surfaceElevated}
+          />
+        }
       />
     </View>
   );
