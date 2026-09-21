@@ -95,7 +95,7 @@ adb shell am start -n com.elemestmdbapp/.MainActivity
 ## Where the nine lists ended up
 
 The brief asks for at least four of these. All nine are in the app. Movies and TV show them as
-horizontal shelves, each with a See All button that opens a full paginated grid. People is a grid.
+horizontal shelves, each with a See all button that opens a full paginated grid. People is a grid.
 
 | # | List | Endpoint | Screen |
 |---|---|---|---|
@@ -110,7 +110,7 @@ horizontal shelves, each with a See All button that opens a full paginated grid.
 | 9 | Popular people | `person/popular` | People tab |
 
 All of it comes from the one array in `src/features/catalog/catalogConfig.ts`, so the tabs, the
-See All grids and this table can't drift apart.
+See all grids and this table can't drift apart.
 
 The other things the brief asks for:
 
@@ -126,6 +126,28 @@ The other things the brief asks for:
   button, so a failed request never leaves a blank screen.
 - Also: pull to refresh, infinite scroll, and an offline banner.
 
+## Design
+
+Dark, cinematic and content first: the posters supply the colour and the chrome stays quiet. The
+tokens live in `src/shared/theme/` and every screen draws from them.
+
+- **Colour.** A Material 3 dark scheme seeded on a warm amber, with six tonal surface steps instead
+  of flat black, a cool secondary so the palette is not one hue, and container colours for the
+  states that need a filled surface.
+- **Type.** One scale in `typography.ts`, from `display` down to a `caps` run for meta rows. Large
+  text carries negative tracking and small text positive, which is what keeps a bigger size from
+  just looking bigger.
+- **Shape and space.** A 4pt spacing scale and a Material 3 radius scale (8/12/16/20/28). Posters
+  are 16, chips 8, buttons and pills fully round.
+- **Icons.** One family (Ionicons, outline cut) behind `AppIcon`. The first build used text glyphs,
+  which render as colour emoji on Android and made the tab bar look like a mock-up.
+- **Depth.** `Scrim` is a stack of thin bands whose opacity follows a curve, which the eye reads as
+  a gradient. It fades poster artwork into the page and darkens the backdrop behind the top bar.
+- **Motion.** A tap answers with a small spring through `PressableScale`, and the stack animates
+  sideways instead of using the platform default.
+- **Chrome.** The tab bar follows the Material 3 navigation bar: a tonal pill behind the active
+  icon, with the bottom inset counted in so it still clears a gesture bar.
+
 ## Code layout
 
 ```
@@ -133,7 +155,7 @@ src/
   app/          navigation and the redux store
   constants/    TMDB urls/sizes, plus the one file that reads @env
   features/
-    catalog/    the nine lists, the shelves, the See All grids
+    catalog/    the nine lists, the shelves, the See all grids
     people/     popular people grid
     detail/     movie, TV and person detail screens
     search/     search screen
@@ -141,7 +163,7 @@ src/
   shared/
     api/        RTK Query client
     components/ cards, skeletons, states, icons
-    theme/      colors and layout numbers
+    theme/      colours, type scale, layout numbers
     types/      TMDB response types and the shared view models
     utils/      formatters, image urls
 ```
@@ -174,15 +196,15 @@ building, the watchlist slice (add, toggle, remove, de-dupe, rating clamping), a
 for the card and the star rating.
 
 No test touches `@env`, so the suite passes on a clone with no `.env`. `jest.config.js` widens
-`transformIgnorePatterns` because Redux Toolkit pulls in ESM-only packages (immer, reselect) that
-the React Native jest preset doesn't transform by default.
+`transformIgnorePatterns` because Redux Toolkit and the icon package both ship untranspiled source,
+and maps `.ttf` to a stub in `__mocks__/fontMock.js` because Jest cannot parse a font file.
 
 ## Notes
 
 - **Splash is native, not bootsplash.** The brief asks for a splash screen; an Android launch theme
   gives you one with no extra native dependency.
-- **Icons are text glyphs.** react-native-vector-icons wants an extra Gradle font-linking step and
-  the package is deprecated in favour of per-family packages. It's a tab bar and a few badges.
+- **Ionicons for the icon set.** One family with an outline cut, autolinked on Android so there is no
+  manual font-linking step. The earlier build used text glyphs, which fall back to colour emoji.
 - **Plain RN `Image`, not react-native-fast-image.** Fresco already caches remote images on
   Android. One less native module to keep in step with React Native releases.
 - **AsyncStorage plus a small hook, not redux-persist.** The flush logic is 40 lines in
