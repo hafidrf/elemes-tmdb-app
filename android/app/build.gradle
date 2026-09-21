@@ -55,6 +55,22 @@ react {
 }
 
 /**
+ * react-native-dotenv inlines .env into the JS bundle at build time, but Gradle
+ * cannot see that the file is an input. Without this block, editing .env leaves
+ * createBundleReleaseJsAndAssets UP-TO-DATE, so the app keeps running the values
+ * it was first built with. That looks exactly like a bad API key: the app starts,
+ * every request fails and it sits on the error state no matter how many times you
+ * rebuild. Declaring the file as an input makes a .env edit invalidate the bundle.
+ */
+tasks.configureEach { task ->
+    if (task.name.startsWith("createBundle") && task.name.endsWith("JsAndAssets")) {
+        def dotenvFiles = [rootProject.file("../.env"), rootProject.file("../.env.example")]
+                .findAll { it.exists() }
+        task.inputs.files(dotenvFiles).withPropertyName("dotenv")
+    }
+}
+
+/**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
 def enableProguardInReleaseBuilds = false

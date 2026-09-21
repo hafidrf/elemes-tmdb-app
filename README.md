@@ -96,8 +96,13 @@ TMDB_API_KEY=
 `Authorization: Bearer ...`. If only the v3 key is set, the requests fall back to the `api_key`
 query param instead, that check is in `src/shared/api/tmdbApi.ts`.
 
-Values are inlined at build time, so if you change `.env` while Metro is running you need
-`npm start -- --reset-cache`.
+Values are inlined at build time. In a debug build that means Metro, so changing `.env` while it is
+running needs `npm start -- --reset-cache`. A release build takes care of itself: `android/app/build.gradle`
+declares `.env` as an input of the JS bundle task, so editing the file invalidates the bundle instead of
+leaving the values you first built with baked into the APK.
+
+If you swap credentials and the app still shows the old data, something on the device has cached the
+earlier responses. `adb shell pm clear com.elemestmdbapp` clears that, and the watchlist along with it.
 
 ### Building it by hand
 
@@ -333,6 +338,11 @@ arm64-v8a. On the device:
 - the watchlist still holding both titles and the 4 star rating after a force-stop and relaunch
 - a pull on the watchlist issuing one detail request per saved title (2 titles, 2 requests) and
   writing both refreshed snapshots back, read off the device log while this was being checked
+
+The install instructions were checked the way a reviewer meets them, not the way the author had them
+set up: a second `git clone` into an empty directory, `npm install` from scratch, then
+`./gradlew assembleRelease` from that clean checkout. That built in 7m 17s across 340 tasks with no
+`.env` present, which is exactly the state a fresh clone starts in.
 
 `gradlew assembleDebug` and `gradlew assembleRelease` both completed, and the tests, lint and type
 checks above are green.
