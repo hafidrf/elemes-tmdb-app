@@ -1,5 +1,6 @@
 package com.elemestmdbapp
 
+import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -12,6 +13,20 @@ class MainActivity : ReactActivity() {
    * rendering of the component.
    */
   override fun getMainComponentName(): String = "ElemesTmdbApp"
+
+  /**
+   * Swaps the launch theme (`SplashTheme`, set in AndroidManifest) for the real
+   * app theme as soon as the activity starts. This is what makes the native
+   * splash screen disappear and the React UI appear.
+   *
+   * `super.onCreate(null)` is intentional: passing a null bundle stops Android
+   * from restoring the previous fragment state, which is the documented
+   * requirement when a React Native app owns the view hierarchy.
+   */
+  override fun onCreate(savedInstanceState: Bundle?) {
+    setTheme(R.style.AppTheme)
+    super.onCreate(null)
+  }
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
