@@ -210,10 +210,29 @@ src/
 `shared/` never imports from `features/`. That's why `PersonCard` and the category types live in
 `shared/` even though a person looks like it belongs to a feature.
 
+**Where this differs from the layout the brief suggested.** The example put `screens/`, `api/`,
+`navigation/`, `hooks/`, `components/` and `types/` at the top of `src/`, with `features/` holding
+only slices and feature-local components. Two things moved, one stayed:
+
+- **Screens live inside their feature, not in a top-level `screens/`.** `MovieDetailScreen` sits in
+  `detail/`, `SearchScreen` in `search/`. A top-level `screens/` becomes a second, parallel index of
+  the app that has to be kept in step with `features/` by hand; keeping a screen beside the hooks
+  and components it actually uses means a rename touches one folder.
+- **`api/`, `navigation/`, `components/`, `theme/`, `types/`, `utils/` and `hooks/` sit under
+  `shared/` instead of at the top of `src/`.** That gives the boundary above an address. Everything
+  under `shared/` must stay free of `features/` imports, and making the two folders siblings is what
+  turns that rule into something you can check by looking rather than by remembering.
+- **`constants/` did stay at the top level**, as suggested. Nothing in it is UI, and both `shared/`
+  and `features/` read it, so it belongs to neither.
+
 ## How the TMDB data is handled
 
 - One RTK Query API in `src/shared/api/tmdbApi.ts`, 11 endpoints. No component calls fetch
   directly, so caching and refetching come from RTK Query.
+- Responses are tagged `Movies`, `TV` and `People`. `/search/multi` provides all three, because one
+  request does cover all three. There is deliberately no `Watchlist` tag: the watchlist is local
+  slice state, so a save has no server cache entry to invalidate. Nothing here declares
+  `invalidatesTags` either, for the same reason — this API ships no mutations.
 - TMDB says `title` for movies and `name` for TV, `release_date` against `first_air_date`, and
   hands back null poster paths more often than you'd expect. All of that gets flattened into one
   `MediaSummary` in `src/shared/utils/formatters.ts`, which is why `MediaCard` is a dumb component.
@@ -254,6 +273,15 @@ FastImage to `__mocks__/fastImageMock.js` so a native view never has to resolve.
 - **AsyncStorage plus a small hook, not redux-persist.** The flush logic is 40 lines in
   `useWatchlistPersistence.ts`, and the `hydrated` flag in the slice stops the first render from
   writing an empty list over what was saved.
+- **List performance is decided per list, not copied around.** The horizontal shelves pass
+  `getItemLayout`: every card is `posterCardWidth` wide behind a fixed gap, so an index offset is
+  arithmetic rather than a measurement. The two-column grids cannot. A poster title can wrap to two
+  lines while a person's name does not, and the See All grid mixes both kinds in one column, so any
+  computed row height would be wrong and the list would scroll to the wrong row. Those grids take
+  `initialNumToRender`, `maxToRenderPerBatch`, `windowSize` and `removeClippedSubviews` instead,
+  which is what actually shows up while paging. The shelves skip `removeClippedSubviews` on purpose:
+  they already sit inside a `ScrollView`, and clipping a horizontal list nested in a vertical one is
+  a known way to end up with blank posters.
 - **react-native-dotenv, not react-native-config.** Build-time inlining, no native changes.
 - **The navigator header is off in the tabs.** Each tab draws its own title, otherwise the same
   word shows up twice on screen.
