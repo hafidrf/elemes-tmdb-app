@@ -1,14 +1,18 @@
 import React from 'react';
-import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native';
+import { StyleProp, TextStyle } from 'react-native';
+import Ionicons, { IoniconsIconName } from '@react-native-vector-icons/ionicons';
 
-// Plain text glyphs instead of an icon font. react-native-vector-icons needs an
-// extra Gradle font-linking step on Android, and this is a tab bar plus a few
-// badges, not a design system.
+import { colors } from '../theme/colors';
+
+// One icon family, mostly the outline cut. Ionicons autolinks on Android, so
+// there is no manual font-linking step, and a real icon font keeps the chrome
+// monochrome instead of the colour emoji a text glyph gives you.
 export type IconName =
   | 'movie'
   | 'tv'
   | 'people'
   | 'bookmark'
+  | 'bookmarkFilled'
   | 'search'
   | 'star'
   | 'starOutline'
@@ -18,23 +22,40 @@ export type IconName =
   | 'film'
   | 'warning'
   | 'refresh'
-  | 'wifiOff';
+  | 'offline'
+  | 'play'
+  | 'clock'
+  | 'calendar'
+  | 'trending'
+  | 'trash'
+  | 'info'
+  | 'check'
+  | 'eye';
 
-const GLYPHS: Record<IconName, string> = {
-  movie: '🎬',
-  tv: '📺',
-  people: '👥',
-  bookmark: '🔖',
-  search: '🔍',
-  star: '★',
-  starOutline: '☆',
-  close: '✕',
-  chevronRight: '›',
-  chevronLeft: '‹',
-  film: '🎞',
-  warning: '⚠',
-  refresh: '⟳',
-  wifiOff: '⚡',
+const GLYPHS: Record<IconName, IoniconsIconName> = {
+  movie: 'film-outline',
+  tv: 'tv-outline',
+  people: 'people-outline',
+  bookmark: 'bookmark-outline',
+  bookmarkFilled: 'bookmark',
+  search: 'search-outline',
+  star: 'star',
+  starOutline: 'star-outline',
+  close: 'close',
+  chevronRight: 'chevron-forward',
+  chevronLeft: 'chevron-back',
+  film: 'film-outline',
+  warning: 'alert-circle-outline',
+  refresh: 'refresh-outline',
+  offline: 'cloud-offline-outline',
+  play: 'play-circle-outline',
+  clock: 'time-outline',
+  calendar: 'calendar-outline',
+  trending: 'trending-up-outline',
+  trash: 'trash-outline',
+  info: 'information-circle-outline',
+  check: 'checkmark',
+  eye: 'eye-outline',
 };
 
 interface AppIconProps {
@@ -44,19 +65,6 @@ interface AppIconProps {
   style?: StyleProp<TextStyle>;
 }
 
-export const AppIcon = ({ name, size = 16, color, style }: AppIconProps) => {
-  return (
-    <Text
-      allowFontScaling={false}
-      style={[styles.icon, { fontSize: size }, color ? { color } : null, style]}>
-      {GLYPHS[name]}
-    </Text>
-  );
-};
-
-const styles = StyleSheet.create({
-  icon: {
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-});
+export const AppIcon = ({ name, size = 16, color = colors.textPrimary, style }: AppIconProps) => (
+  <Ionicons name={GLYPHS[name]} size={size} color={color} style={style} />
+);
