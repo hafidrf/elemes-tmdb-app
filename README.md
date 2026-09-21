@@ -40,7 +40,7 @@ Every item from the brief, and where it lives.
 | 6 | Search (bonus) | `SearchScreen` over `/search/multi`, 400 ms debounce |
 | 7 | Rating or watchlist | **both** — `StarRating` and the watchlist, persisted in AsyncStorage |
 | 8 | GitHub docs for installing and running | this README: Tech stack, Running it, Code layout, Known gaps |
-| 9 | Repo link sent to tommy@elemes.id | sent with this repo |
+| 9 | Repo link sent to tommy@elemes.id | lives outside the repo — this is the link to send: https://github.com/hafidrf/elemes-tmdb-app |
 | 10 | Version control | conventional commits on `main`, not one "final code" commit |
 | 11 | Framework is free (RN / Kotlin / Android Studio) | React Native CLI — see Tech stack |
 
