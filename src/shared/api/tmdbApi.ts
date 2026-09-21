@@ -49,14 +49,18 @@ export const tmdbApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Movie', 'Tv', 'Person'],
+  // Every TMDB response is server-cached under one of these three tags. There is
+  // no Watchlist tag on purpose: the watchlist is local state in watchlistSlice,
+  // so there is nothing in this cache for a save to invalidate. Nothing here
+  // declares invalidatesTags either, because this API has no mutations.
+  tagTypes: ['Movies', 'TV', 'People'],
   endpoints: builder => ({
     listMovies: builder.query<
       PaginatedResponse<Movie>,
       { category: MovieListCategory; page?: number }
     >({
       query: ({ category, page = 1 }) => buildQuery(`movie/${category}`, { page })(),
-      providesTags: ['Movie'],
+      providesTags: ['Movies'],
     }),
 
     listTvShows: builder.query<
@@ -64,57 +68,57 @@ export const tmdbApi = createApi({
       { category: TvListCategory; page?: number }
     >({
       query: ({ category, page = 1 }) => buildQuery(`tv/${category}`, { page })(),
-      providesTags: ['Tv'],
+      providesTags: ['TV'],
     }),
 
     listPopularPeople: builder.query<PaginatedResponse<Person>, { page?: number } | void>({
       query: arg => buildQuery('person/popular', { page: arg?.page ?? 1 })(),
-      providesTags: ['Person'],
+      providesTags: ['People'],
     }),
 
     movieDetail: builder.query<MovieDetail, number>({
       query: id => buildQuery(`movie/${id}`)(),
-      providesTags: ['Movie'],
+      providesTags: ['Movies'],
     }),
 
     movieCredits: builder.query<Credits, number>({
       query: id => buildQuery(`movie/${id}/credits`)(),
-      providesTags: ['Movie'],
+      providesTags: ['Movies'],
     }),
 
     movieVideos: builder.query<VideosResponse, number>({
       query: id => buildQuery(`movie/${id}/videos`)(),
-      providesTags: ['Movie'],
+      providesTags: ['Movies'],
     }),
 
     tvDetail: builder.query<TvDetail, number>({
       query: id => buildQuery(`tv/${id}`)(),
-      providesTags: ['Tv'],
+      providesTags: ['TV'],
     }),
 
     tvCredits: builder.query<Credits, number>({
       query: id => buildQuery(`tv/${id}/credits`)(),
-      providesTags: ['Tv'],
+      providesTags: ['TV'],
     }),
 
     personDetail: builder.query<PersonDetail, number>({
       query: id => buildQuery(`person/${id}`)(),
-      providesTags: ['Person'],
+      providesTags: ['People'],
     }),
 
     personCombinedCredits: builder.query<CombinedCreditsResponse, number>({
       query: id => buildQuery(`person/${id}/combined_credits`)(),
-      providesTags: ['Person'],
+      providesTags: ['People'],
     }),
 
-    // one request covers movies, TV and people
+    // one request covers movies, TV and people, so it provides all three tags
     searchMulti: builder.query<
       PaginatedResponse<SearchResult>,
       { query: string; page?: number }
     >({
       query: ({ query, page = 1 }) =>
         buildQuery('search/multi', { query, page, include_adult: 'false' })(),
-      providesTags: ['Movie', 'Tv', 'Person'],
+      providesTags: ['Movies', 'TV', 'People'],
     }),
   }),
 });
