@@ -10,6 +10,24 @@ dipakai, bukan cuma 4. Ada splash screen native, skeleton loading di tiap layar,
 debounce, watchlist dan rating yang disimpan di perangkat. Cara jalaninnya di bagian
 "Running it" di bawah.
 
+## Screenshots
+
+Live captures from the release build on a physical phone (Infinix X6855, Android 16), not an
+emulator and not a mockup.
+
+| Movies | TV Shows | People |
+|---|---|---|
+| ![Movies](docs/screenshots/01-movies.jpg) | ![TV Shows](docs/screenshots/02-tv-shows.jpg) | ![People](docs/screenshots/03-people.jpg) |
+
+| Movie detail | Search | Watchlist |
+|---|---|---|
+| ![Movie detail](docs/screenshots/04-movie-detail.jpg) | ![Search](docs/screenshots/05-search.jpg) | ![Watchlist](docs/screenshots/06-watchlist.jpg) |
+
+![See All grid](docs/screenshots/07-category-list.jpg)
+
+The watchlist shot was taken after a force-stop and relaunch, so those two titles and the 4 star
+rating came back from AsyncStorage rather than from memory.
+
 ## Running it
 
 You'll need Node 22+, JDK 17, and the Android SDK with `ANDROID_HOME` pointing at it.
@@ -50,6 +68,17 @@ If `npm run android` doesn't pick up your device:
 cd android
 ./gradlew assembleDebug        # Windows: gradlew.bat assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n com.elemestmdbapp/.MainActivity
+```
+
+A debug build still needs Metro running in a second terminal, since that is where the JS comes from.
+If Metro won't start, build the release variant instead. The JS is bundled into it, so the app runs
+on its own:
+
+```bash
+cd android
+./gradlew assembleRelease      # Windows: gradlew.bat assembleRelease
+adb install -r app/build/outputs/apk/release/app-release.apk
 adb shell am start -n com.elemestmdbapp/.MainActivity
 ```
 
@@ -162,19 +191,24 @@ the React Native jest preset doesn't transform by default.
 - **react-native-dotenv, not react-native-config.** Build-time inlining, no native changes.
 - **The navigator header is off in the tabs.** Each tab draws its own title, otherwise the same
   word shows up twice on screen.
+- **Every screen pads for the status bar itself.** Android 15 and newer always draw edge to edge, so
+  a tab screen with the navigator header off would otherwise slide under the clock. `ScreenHeader`
+  reads `useSafeAreaInsets` for the top gap, the detail screens use the same hook under the floating
+  back button, and the See All screen gets it from its native header.
+- **`metro.config.js` keeps native build output out of Metro's crawl.** Gradle writes into
+  `node_modules/*/android/build` and `android/.cxx`, and rewrites those trees while it runs. Metro
+  crawls `node_modules` by default, so it would index all of that. Nothing under those paths is ever
+  bundled as JS.
 
 ## Known gaps
 
 1. **iOS is untested.** The code is platform agnostic and `ios/` is intact, but it was built and
    run on Android only. The brief allows Android Studio, and this was done on Windows.
-2. **No screenshot in the repo.** They should come from the current build rather than an old one.
-   To grab them, with the app running:
-
-   ```bash
-   adb shell screencap -p /sdcard/shot.png
-   adb pull /sdcard/shot.png docs/screenshots/movies.png
-   ```
-
+2. **Metro's dev server would not start on the machine this was built on.** Metro 0.84.6 on Windows
+   without watchman dies with `Failed to get the SHA-1 for: .../metro-runtime/src/polyfills/require.js`.
+   `react-native bundle`, `gradlew assembleDebug` and `gradlew assembleRelease` all work, which is why
+   the app was verified through the release build. Installing watchman should clear it, and the tests,
+   lint and type check are unaffected either way.
 3. **Search stops at TMDB's page limit.** The grid loads more as you scroll, but `/search/multi`
    caps out at page 500.
 4. **No trailer playback.** `GET /movie/{id}/videos` is wired into the API layer but nothing plays
@@ -185,12 +219,18 @@ the React Native jest preset doesn't transform by default.
 6. **`.env` is required.** Without it the app still starts, every request fails, and you land on the
    error state with a Retry button instead of a crash.
 
-### Why there's no live-run proof
+### How it was verified live
 
-The project was verified with a full `gradlew assembleDebug` (199 tasks, successful), a production
-JS bundle, and the test, lint and type checks above. What it wasn't verified against is a running
-device: the machine used for this has no Android Emulator hypervisor driver installed
-(`emulator -accel-check` says it's missing), so the AVD never gets past `offline`. Plug in a phone
-with USB debugging on and run `npm run android` to see it live.
+Built and installed over wireless ADB onto a physical phone: Infinix X6855, Android 16 (API 36),
+arm64-v8a. On the device:
+
+- all four tabs, with the Movies and TV Shows shelves filled from real TMDB data
+- a movie detail screen, including Add to Watchlist and the 5 star rating
+- a search for "batman" returning mixed results from `/search/multi`
+- the See All grid, opened from a shelf
+- the watchlist still holding both titles and the 4 star rating after a force-stop and relaunch
+
+`gradlew assembleDebug` and `gradlew assembleRelease` both completed, and the tests, lint and type
+checks above are green.
 
 
