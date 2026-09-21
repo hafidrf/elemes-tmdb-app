@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import FastImage from '@d11/react-native-fast-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '../theme/colors';
@@ -25,7 +26,16 @@ export const BackdropHeader = ({ backdropPath, onBack }: BackdropHeaderProps) =>
   return (
     <View style={[styles.container, { width, height }]}>
       {uri ? (
-        <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+        <FastImage
+          source={{
+            uri,
+            // the backdrop is the first thing on the screen, so it jumps the queue
+            priority: FastImage.priority.high,
+            cache: FastImage.cacheControl.immutable,
+          }}
+          style={styles.image}
+          resizeMode={FastImage.resizeMode.cover}
+        />
       ) : (
         <View style={styles.fallback} />
       )}

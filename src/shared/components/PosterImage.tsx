@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import FastImage from '@d11/react-native-fast-image';
 
 import { colors } from '../theme/colors';
 import { layout } from '../theme/layout';
@@ -43,11 +44,18 @@ export const PosterImage = ({
     );
   }
 
+  // FastImage keeps posters in a disk cache, so a poster seen once comes back
+  // without a placeholder flash. `immutable` is correct here because TMDB paths
+  // carry a content hash, meaning the bytes behind a URL never change.
   return (
-    <Image
-      source={{ uri }}
+    <FastImage
+      source={{
+        uri,
+        priority: FastImage.priority.normal,
+        cache: FastImage.cacheControl.immutable,
+      }}
       style={{ width, height, borderRadius: radius }}
-      resizeMode="cover"
+      resizeMode={FastImage.resizeMode.cover}
       onError={() => setFailedToLoad(true)}
     />
   );

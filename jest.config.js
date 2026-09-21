@@ -9,8 +9,11 @@ module.exports = {
     'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-native-vector-icons|@reduxjs/toolkit|redux|immer|reselect|@react-navigation)/)',
   ],
   // Ionicons requires its .ttf at import time and Jest cannot parse a font.
+  // FastImage is a native view, so it is swapped for a mock that renders a plain
+  // RN Image instead of trying to resolve a host component.
   moduleNameMapper: {
     '\\.(ttf|otf|woff2?|eot)$': '<rootDir>/__mocks__/fontMock.js',
+    '^@d11/react-native-fast-image$': '<rootDir>/__mocks__/fastImageMock.js',
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
