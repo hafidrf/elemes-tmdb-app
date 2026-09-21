@@ -1,376 +1,196 @@
-# CineCatalog — Movies & TV Shows (TMDB)
+# CineCatalog
 
-A React Native CLI app that browses **all nine** TMDB lists from the brief, with search, an
-offline-persisted watchlist and a local star rating.
+A TMDB browser built with React Native CLI for the App Developer test at Elemes Group.
 
-Built as the technical test for the **App Developer** position at **Elemes Group**.
+Four tabs: Movies, TV Shows, People, Watchlist. All nine lists from the brief are in there,
+plus search, a watchlist and a star rating that survive an app restart.
 
----
+**Catatan singkat (ID):** app ini React Native CLI, bukan Expo. Semua 9 daftar dari soal
+dipakai, bukan cuma 4. Ada splash screen native, skeleton loading di tiap layar, search dengan
+debounce, watchlist dan rating yang disimpan di perangkat. Cara jalaninnya di bagian
+"Running it" di bawah.
 
-## Ringkasan singkat (Bahasa Indonesia)
+## Running it
 
-Aplikasi katalog film & acara TV berbasis **React Native CLI** (bukan Expo) yang menampilkan
-**9 dari 9** daftar TMDB (target brief: minimal 4), plus **search**, **watchlist** dan **rating**
-yang tersimpan lokal di perangkat, **splash screen native**, dan **loading state** (skeleton)
-di setiap pengambilan data.
-
-Cara menjalankan (ringkas):
+You'll need Node 22+, JDK 17, and the Android SDK with `ANDROID_HOME` pointing at it.
 
 ```bash
 npm install
 cp .env.example .env      # Windows: Copy-Item .env.example .env
-# isi TMDB_READ_ACCESS_TOKEN di dalam .env
-npm start                 # terminal 1 — Metro
-npm run android           # terminal 2 — build & install ke emulator/device
+npm start                 # terminal 1
+npm run android           # terminal 2
 ```
 
-Detail lengkap ada di bagian [Installation & running](#installation--running).
+### Setting up .env
 
----
+Get a key at https://www.themoviedb.org/settings/api. Either kind works:
 
-## Table of contents
+- **API Read Access Token (v4)** - the long string starting with `eyJ`
+- **API Key (v3)** - the 32 character hex string
 
-- [Feature coverage vs. the brief](#feature-coverage-vs-the-brief)
-- [Screenshots](#screenshots)
-- [Tech stack](#tech-stack)
-- [Installation & running](#installation--running)
-- [Project structure](#project-structure)
-- [How the data layer works](#how-the-data-layer-works)
-- [Testing & code quality](#testing--code-quality)
-- [Design decisions and trade-offs](#design-decisions-and-trade-offs)
-- [Known issues / limitations](#known-issues--limitations)
-
----
-
-## Feature coverage vs. the brief
-
-### The nine lists — all implemented and displayed (`9/9`)
-
-Every list from the brief is reachable in the UI: four per media tab as horizontal shelves, and
-each has a **See All** screen with its own paginated grid. The registry that drives this lives in
-`src/features/catalog/catalogConfig.ts`, so a category can never be "called by the API but never
-shown".
-
-| # | Brief requirement | Endpoint | Where it is shown |
-|---|---|---|---|
-| 1 | Top rated movies | `GET /movie/top_rated` | Movies tab → shelf + See All |
-| 2 | Upcoming movies | `GET /movie/upcoming` | Movies tab → shelf + See All |
-| 3 | Now playing movies | `GET /movie/now_playing` | Movies tab → shelf + See All |
-| 4 | Popular movies | `GET /movie/popular` | Movies tab → shelf + See All |
-| 5 | Popular TV shows | `GET /tv/popular` | TV Shows tab → shelf + See All |
-| 6 | Top rated TV shows | `GET /tv/top_rated` | TV Shows tab → shelf + See All |
-| 7 | On the air TV shows | `GET /tv/on_the_air` | TV Shows tab → shelf + See All |
-| 8 | Airing today TV shows | `GET /tv/airing_today` | TV Shows tab → shelf + See All |
-| 9 | Popular people | `GET /person/popular` | People tab → paginated grid |
-
-### Other requirements
-
-| Requirement | Status | Where |
-|---|---|---|
-| Splash screen | ✅ native | `SplashTheme` + `splash_background.xml` + `MainActivity.onCreate` |
-| Loading state while fetching | ✅ | Skeleton loaders (`Skeleton.tsx`) on every screen; footer spinner for page 2+ |
-| Attractive UI/UX | ✅ | Dark "cinema" theme, poster carousels, See All grids, pull-to-refresh |
-| Search (bonus) | ✅ | `/search/multi` with 400 ms debounce — covers movies, TV and people |
-| Rating **or** watchlist | ✅ both | Watchlist in AsyncStorage **and** a 5-star user rating |
-| GitHub docs: install & run | ✅ | This file |
-| Git version control | ✅ | Conventional commits, logical history |
-| Tech: React Native / Kotlin / Android Studio | ✅ | React Native CLI 0.85, TypeScript strict |
-| Detail screens (bonus) | ✅ | Movie / TV / person detail with cast and filmography |
-| Error & empty states | ✅ | `StateView` with a Retry action on every screen |
-| Offline awareness | ✅ | `OfflineBanner` via `@react-native-community/netinfo` |
-| Pagination / infinite scroll | ✅ | See All grids, People grid and search results |
-
----
-
-## Screenshots
-
-> This repo deliberately contains **no committed screenshots** — captures should come from a device
-> running the current code rather than from an earlier build. Capture them with:
-
-```bash
-adb shell screencap -p /sdcard/shot.png
-adb pull /sdcard/shot.png docs/screenshots/movies.png
-```
-
-Suggested capture set: **splash**, **Movies tab** (four shelves), **TV Shows tab**, **People grid**,
-a **movie detail** (showing *Add to Watchlist* and the star rating), **search results**, and the
-**Watchlist tab**.
-
----
-
-## Tech stack
-
-| Layer | Choice | Version |
-|---|---|---|
-| Framework | React Native **CLI** (not Expo) | 0.85.2 |
-| Language | TypeScript (strict) | 5.8 |
-| UI runtime | React | 19.2 |
-| State management | Redux Toolkit | 2.12 |
-| Data fetching / caching | **RTK Query** (`createApi`) — no manual axios/fetch in components | 2.12 |
-| Navigation | React Navigation (native-stack + bottom-tabs) | 7.x |
-| Local storage | `@react-native-async-storage/async-storage` | 3.1 |
-| Connectivity | `@react-native-community/netinfo` | 12.x |
-| Env config | `react-native-dotenv` (build-time inlining, `.env` never committed) | 4.1 |
-| Testing | Jest + React Native Testing Library | 29 / 14 |
-| Linting / formatting | ESLint (`@react-native` config) + Prettier | 8 / 2.8 |
-| Splash screen | Native Android launch theme (zero extra dependencies) | — |
-
----
-
-## Installation & running
-
-### 1. Prerequisites
-
-| Tool | Version used here | Notes |
-|---|---|---|
-| Node.js | 22.23.1 | `>= 22.11` enforced by `package.json` |
-| JDK | 17 | Required by the Android Gradle Plugin |
-| Android Studio + SDK | platform + build-tools 36 | `ANDROID_HOME` must be set |
-| Emulator or physical device | API 24+ | Enable USB debugging for a device |
-
-Verify your setup:
-
-```bash
-node -v
-java -version
-echo %ANDROID_HOME%        # Windows
-echo $ANDROID_HOME         # macOS / Linux
-adb devices
-```
-
-### 2. Install dependencies
-
-```bash
-git clone <this-repository-url>
-cd elemes-tmdb-app
-npm install
-```
-
-### 3. Configure your TMDB credentials
-
-Create an API key at <https://www.themoviedb.org/settings/api>. You can use either:
-
-- **API Read Access Token** (v4, recommended) — the long JWT starting with `eyJ…`
-- **API Key (v3)** — the 32-character hex string (supported as a fallback)
-
-Create the local env file:
-
-```bash
-# macOS / Linux
-cp .env.example .env
-
-# Windows PowerShell
-Copy-Item .env.example .env
-```
-
-Then fill it in:
+Fill in `.env`:
 
 ```ini
-TMDB_READ_ACCESS_TOKEN=eyJhbGciOi...your-token...
-TMDB_API_KEY=                       # optional fallback
+TMDB_READ_ACCESS_TOKEN=eyJ...
+TMDB_API_KEY=
 ```
 
-> `.env` is **git-ignored**, so real credentials are never committed.
-> The v4 token is sent as `Authorization: Bearer …`. If only the v3 key is present the app falls
-> back to the `api_key` query parameter — see `src/shared/api/tmdbApi.ts`.
-> After editing `.env`, restart Metro with a cleared cache: `npm start -- --reset-cache`.
+`.env` is git-ignored, so the key doesn't end up in the repo. The v4 token is sent as
+`Authorization: Bearer ...`. If only the v3 key is set, the requests fall back to the `api_key`
+query param instead, that check is in `src/shared/api/tmdbApi.ts`.
 
-### 4. Start Metro
+Values are inlined at build time, so if you change `.env` while Metro is running you need
+`npm start -- --reset-cache`.
 
-```bash
-npm start
-```
+### Building it by hand
 
-### 5. Build, install and launch on Android
-
-In a second terminal:
-
-```bash
-npm run android
-```
-
-Equivalent manual flow (useful when a device is not auto-detected):
+If `npm run android` doesn't pick up your device:
 
 ```bash
 cd android
-./gradlew assembleDebug             # Windows: gradlew.bat assembleDebug
+./gradlew assembleDebug        # Windows: gradlew.bat assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.elemestmdbapp/.MainActivity
 ```
 
-The launcher shows **CineCatalog**; a native splash screen is displayed until React takes over.
+### Scripts
 
-### Useful scripts
-
-| Command | Purpose |
+| Command | Does |
 |---|---|
-| `npm start` | Start the Metro bundler |
-| `npm run android` | Build, install and launch on Android |
-| `npm test` | Run the Jest suite |
-| `npm run lint` | ESLint across the project |
-| `npx tsc --noEmit` | Type-check without emitting files |
-| `npx react-native run-android --deviceId <id>` | Target a specific device |
+| `npm start` | Metro |
+| `npm run android` | build, install, launch |
+| `npm test` | Jest |
+| `npm run lint` | ESLint |
+| `npx tsc --noEmit` | type check |
 
-### iOS (not included in this submission)
+## Where the nine lists ended up
 
-The brief targets Android (`Android Studio` is listed under allowed tooling) and this project was
-developed and verified on Android. The iOS project is present in `ios/` and the shared JavaScript
-is platform-agnostic, so running it on a Mac is:
+The brief asks for at least four of these. All nine are in the app. Movies and TV show them as
+horizontal shelves, each with a See All button that opens a full paginated grid. People is a grid.
 
-```bash
-cd ios && pod install && cd ..
-npm run ios
-```
+| # | List | Endpoint | Screen |
+|---|---|---|---|
+| 1 | Top rated movies | `movie/top_rated` | Movies tab, shelf 2 |
+| 2 | Upcoming movies | `movie/upcoming` | Movies tab, shelf 3 |
+| 3 | Now playing movies | `movie/now_playing` | Movies tab, shelf 4 |
+| 4 | Popular movies | `movie/popular` | Movies tab, shelf 1 |
+| 5 | Popular TV shows | `tv/popular` | TV Shows tab, shelf 1 |
+| 6 | Top rated TV shows | `tv/top_rated` | TV Shows tab, shelf 2 |
+| 7 | On the air TV shows | `tv/on_the_air` | TV Shows tab, shelf 3 |
+| 8 | Airing today TV shows | `tv/airing_today` | TV Shows tab, shelf 4 |
+| 9 | Popular people | `person/popular` | People tab |
 
----
+All of it comes from the one array in `src/features/catalog/catalogConfig.ts`, so the tabs, the
+See All grids and this table can't drift apart.
 
-## Project structure
+The other things the brief asks for:
 
-Feature-first layout: each feature owns its slice, components and screens, while anything shared
-lives under `src/shared`.
+- **Splash screen.** Native Android launch theme. `SplashTheme` in `values/styles.xml` is swapped
+  for the real theme in `MainActivity.onCreate`. No splash library.
+- **Loading state.** Skeleton placeholders shaped like the real cards on first load, plus a small
+  spinner at the bottom of the list when paging.
+- **Search (bonus).** `/search/multi` behind a 400 ms debounce, so one bar covers movies, TV and
+  people.
+- **Rating or watchlist.** Both. The watchlist lives in AsyncStorage and the star rating is stored
+  alongside it.
+- **Error and empty states.** One `StateView` component. The error state always has a Retry
+  button, so a failed request never leaves a blank screen.
+- Also: pull to refresh, infinite scroll, and an offline banner.
+
+## Code layout
 
 ```
 src/
-├── app/                        # app shell
-│   ├── navigation/
-│   │   ├── RootNavigator.tsx    # stack + bottom tabs, dark theme
-│   │   └── types.ts             # typed route params
-│   └── store/
-│       └── store.ts             # Redux store + typed hooks (useAppDispatch/Selector)
-├── constants/
-│   ├── config.ts                # ONLY module that reads `@env` credentials
-│   └── tmdb.ts                  # pure base URLs + image sizes (unit-testable)
-├── features/
-│   ├── catalog/
-│   │   ├── catalogConfig.ts      # registry of the nine lists (+ requirement numbers)
-│   │   ├── useMediaList.ts       # paginated movie/TV list hook
-│   │   ├── components/CatalogSection.tsx
-│   │   └── screens/             # MoviesScreen, TvShowsScreen, CatalogGroupScreen,
-│   │                            # CategoryListScreen (See All)
-│   ├── people/
-│   │   ├── usePeopleList.ts
-│   │   └── screens/PeopleScreen.tsx
-│   ├── detail/
-│   │   ├── detailStyles.ts       # shared detail typography
-│   │   └── screens/             # MovieDetail, TvDetail, PersonDetail
-│   ├── search/screens/SearchScreen.tsx
-│   └── watchlist/
-│       ├── watchlistSlice.ts     # Redux slice (entries + user rating)
-│       ├── watchlistStorage.ts   # AsyncStorage read/write, defensive parsing
-│       ├── useWatchlistPersistence.ts
-│       └── screens/WatchlistScreen.tsx
-└── shared/
-    ├── api/tmdbApi.ts            # RTK Query: 11 endpoints, one base API
-    ├── components/               # MediaCard, PosterImage, RatingBadge, Skeleton,
-    │                             # StateView, SectionCarousel, StarRating, ScreenHeader, …
-    ├── hooks/useDebouncedValue.ts
-    ├── theme/                    # colors.ts, layout.ts
-    ├── types/                    # tmdb.ts, catalogRow.ts
-    └── utils/                    # imageUrl.ts, formatters.ts
+  app/          navigation and the redux store
+  constants/    TMDB urls/sizes, plus the one file that reads @env
+  features/
+    catalog/    the nine lists, the shelves, the See All grids
+    people/     popular people grid
+    detail/     movie, TV and person detail screens
+    search/     search screen
+    watchlist/  slice, storage, watchlist screen
+  shared/
+    api/        RTK Query client
+    components/ cards, skeletons, states, icons
+    theme/      colors and layout numbers
+    types/      TMDB response types and the shared view models
+    utils/      formatters, image urls
 ```
 
-Rule of thumb applied throughout: **`shared/` never imports from `features/`**. That is why
-`PersonCard` and the category type definitions live in `src/shared` even though a "person" feels
-like a feature.
+`shared/` never imports from `features/`. That's why `PersonCard` and the category types live in
+`shared/` even though a person looks like it belongs to a feature.
 
----
+## How the TMDB data is handled
 
-## How the data layer works
+- One RTK Query API in `src/shared/api/tmdbApi.ts`, 11 endpoints. No component calls fetch
+  directly, so caching and refetching come from RTK Query.
+- TMDB says `title` for movies and `name` for TV, `release_date` against `first_air_date`, and
+  hands back null poster paths more often than you'd expect. All of that gets flattened into one
+  `MediaSummary` in `src/shared/utils/formatters.ts`, which is why `MediaCard` is a dumb component.
+- Paging sits in `useMediaList` and `usePeopleList`. They append pages, skip ids they already have,
+  and drop a response that lands for a page you've already scrolled past.
+- Credentials get read once, in `src/constants/config.ts`. Everything else imports the plain
+  constants from `src/constants/tmdb.ts`, which keeps the tests independent of `.env`.
 
-- **One RTK Query API** (`src/shared/api/tmdbApi.ts`) defines all 11 endpoints. Components never
-  call `fetch`/`axios` directly; they consume generated hooks, so caching, de-duplication,
-  refetching and invalidation come for free.
-- **Auth**: `prepareHeaders` attaches `Authorization: Bearer <token>` when a v4 token exists, and
-  the request helpers append `api_key` only when it does not.
-- **Types**: every payload is modelled in `src/shared/types/tmdb.ts`. The UI never receives `any`;
-  `search/multi` results are a discriminated union narrowed by `media_type`.
-- **Normalisation**: TMDB returns `title` for movies and `name` for TV, `release_date` vs
-  `first_air_date`, and often `null` poster paths. `src/shared/utils/formatters.ts` converts all of
-  that into one `MediaSummary` view model, which is why `MediaCard` is a dumb component.
-- **Pagination**: `useMediaList` / `usePeopleList` accumulate pages, de-duplicate by id and ignore
-  responses that do not belong to the page currently on screen.
-
----
-
-## Testing & code quality
+## Tests
 
 ```bash
-npm test          # 49 tests / 5 suites
-npm run lint      # ESLint, 0 errors and 0 warnings
-npx tsc --noEmit  # 0 type errors
+npm test          # 49 tests in 5 suites
+npm run lint      # eslint, no errors or warnings
+npx tsc --noEmit  # no type errors
 ```
 
-### What was verified on this build
+Covered: the formatters (including the null and empty cases TMDB really returns), image url
+building, the watchlist slice (add, toggle, remove, de-dupe, rating clamping), and component tests
+for the card and the star rating.
 
-| Check | Result |
-|---|---|
-| `npx tsc --noEmit` | 0 type errors |
-| `npx eslint . --max-warnings 0` | 0 errors, 0 warnings |
-| `npx jest --ci` | 49 tests / 5 suites, all passing |
-| `gradlew assembleDebug` | **BUILD SUCCESSFUL** — 199 tasks, including `MainActivity.kt`, the splash resources and CMake builds for all four ABIs |
-| `react-native bundle --dev false` | Production JS bundle built (≈1.5 MB, 19 assets) with the `.env` token inlined |
-| Interactive device run | **Not done here** — see limitation 7 below |
+No test touches `@env`, so the suite passes on a clone with no `.env`. `jest.config.js` widens
+`transformIgnorePatterns` because Redux Toolkit pulls in ESM-only packages (immer, reselect) that
+the React Native jest preset doesn't transform by default.
 
-What is covered:
+## Notes
 
-| Suite | Focus |
-|---|---|
-| `src/shared/utils/__tests__/formatters.test.ts` | Date/rating/runtime/count formatting and the movie-vs-TV normalisers, including the empty and `null` cases TMDB actually returns |
-| `src/shared/utils/__tests__/imageUrl.test.ts` | Image URL building, size selection, missing-path handling |
-| `src/features/watchlist/__tests__/watchlistSlice.test.ts` | Add/toggle/remove, de-duplication, `movie` vs `tv` with the same id, rating clamping |
-| `src/shared/components/__tests__/MediaCard.test.tsx` | Rendering, accessibility label, press callback, `NR` + placeholder fallback |
-| `src/shared/components/__tests__/StarRating.test.tsx` | Score read-out, tapping a star, clearing a rating, read-only mode |
+- **Splash is native, not bootsplash.** The brief asks for a splash screen; an Android launch theme
+  gives you one with no extra native dependency.
+- **Icons are text glyphs.** react-native-vector-icons wants an extra Gradle font-linking step and
+  the package is deprecated in favour of per-family packages. It's a tab bar and a few badges.
+- **Plain RN `Image`, not react-native-fast-image.** Fresco already caches remote images on
+  Android. One less native module to keep in step with React Native releases.
+- **AsyncStorage plus a small hook, not redux-persist.** The flush logic is 40 lines in
+  `useWatchlistPersistence.ts`, and the `hydrated` flag in the slice stops the first render from
+  writing an empty list over what was saved.
+- **react-native-dotenv, not react-native-config.** Build-time inlining, no native changes.
+- **The navigator header is off in the tabs.** Each tab draws its own title, otherwise the same
+  word shows up twice on screen.
 
-Deliberate choices in the test setup:
+## Known gaps
 
-- **No test touches `@env`.** `src/constants/tmdb.ts` holds the pure constants, so the suite passes
-  on a fresh clone that has no `.env` file.
-- **`transformIgnorePatterns` is widened** in `jest.config.js` because Redux Toolkit's ESM-only
-  dependencies (immer, reselect) are not transformed by the React Native Jest preset by default.
-- **No unused dependencies.** `react-native-vector-icons`, `react-native-gesture-handler` and
-  `@react-native/new-app-screen` from the template were removed after confirming nothing imports
-  them (verified with `npm ls`), so `package.json` reflects exactly what ships.
+1. **iOS is untested.** The code is platform agnostic and `ios/` is intact, but it was built and
+   run on Android only. The brief allows Android Studio, and this was done on Windows.
+2. **No screenshot in the repo.** They should come from the current build rather than an old one.
+   To grab them, with the app running:
 
----
+   ```bash
+   adb shell screencap -p /sdcard/shot.png
+   adb pull /sdcard/shot.png docs/screenshots/movies.png
+   ```
 
-## Design decisions and trade-offs
+3. **Search stops at TMDB's page limit.** The grid loads more as you scroll, but `/search/multi`
+   caps out at page 500.
+4. **No trailer playback.** `GET /movie/{id}/videos` is wired into the API layer but nothing plays
+   it. The watchlist and rating requirement got the time instead.
+5. **The pull-to-refresh spinner on the two shelf tabs runs on a ~800 ms timer.** Each shelf
+   refetches on its own, so there's no single promise to await. The data does refresh, the timer
+   only drives the spinner. The single-list screens use real fetch state.
+6. **`.env` is required.** Without it the app still starts, every request fails, and you land on the
+   error state with a Retry button instead of a crash.
 
-| Decision | Why | Trade-off accepted |
-|---|---|---|
-| **Grouped navigation** — 4 tabs (Movies / TV / People / Watchlist), a shelf per list, plus a See All grid per category | 9 lists in one scrolling screen would be unusable; grouping keeps every list a real destination | Slightly more navigation depth |
-| **Native splash instead of `react-native-bootsplash`** | The brief only requires a splash screen; an Android launch theme achieves it with zero extra native dependencies and no risk of a New-Architecture incompatibility | Android-only splash (no iOS storyboard asset) |
-| **Text-glyph icons instead of `react-native-vector-icons`** | That package needs an extra Gradle font-linking step and is deprecated in favour of per-family packages — an avoidable native failure point for a 2-day build | Icons are emoji/glyphs, not a bespoke icon font |
-| **RN `Image` instead of `react-native-fast-image`** | Android's Fresco decoder already caches remote images; `fast-image` adds a native module that has historically lagged behind New Architecture releases | No disk-cache tuning knobs |
-| **AsyncStorage + a small custom persistence hook instead of `redux-persist`** | One less library, and the flush/guard logic is ~40 readable lines in `useWatchlistPersistence.ts` | No versioned migrations |
-| **`react-native-dotenv` instead of `react-native-config`** | Build-time inlining needs no native changes; fewer moving parts for a reviewer to reproduce | Env values are baked in at bundle time, so `.env` changes require a cache reset |
-| **`immer`/ESM fix in Jest config rather than downgrading Redux Toolkit** | Root-cause fix, keeps modern dependencies | One extra config line to explain (it is commented) |
-| **Dark "cinema" palette (near-black + amber)** | Posters are the content; a dark canvas makes them pop and avoids the generic purple SaaS look | Not optimised for light mode |
+### Why there's no live-run proof
 
----
-
-## Known issues / limitations
-
-1. **iOS is unverified.** The codebase is platform-agnostic and `ios/` is intact, but it was only
-   built and run on Android (the brief allows `Android Studio`, and this was developed on Windows).
-2. **`.env` is required.** A fresh clone without `.env` will start, but every request fails — by
-   design the app then shows an explicit error state with a Retry action rather than crashing.
-3. **Search only reaches the first few result pages.** `/search/multi` paginates, and the grid
-   loads further pages on scroll; TMDB caps deep pagination at page 500.
-4. **No trailer playback.** `GET /movie/{id}/videos` is wired into the API layer but the detail
-   screen does not render a player (out of the brief's scope; the watchlist/rating requirement was
-   prioritised instead).
-5. **Rating is 1–5 stars, local only.** Star ratings are device-local; nothing is posted back to
-   TMDB, which has no write API for user ratings on this plan.
-6. **The pull-to-refresh spinner on the two shelf tabs is time-based** (~800 ms). Each shelf
-   refetches independently, so there is no single promise to await; the data always refreshes, the
-   timer only governs the spinner. On single-list screens the spinner is tied to real fetch state.
-7. **No interactive run was performed on this machine.** The build box has no Android Emulator
-   hypervisor driver (`emulator -accel-check` reports it as missing), so the AVD never finishes
-   booting — it stalls at `offline` indefinitely. Verification was therefore done through a full
-   Gradle build plus a production JS bundle instead. To review the app interactively, run
-   `npm run android` on a physical device (USB debugging) or on a machine with virtualization
-   enabled.
-
-
+The project was verified with a full `gradlew assembleDebug` (199 tasks, successful), a production
+JS bundle, and the test, lint and type checks above. What it wasn't verified against is a running
+device: the machine used for this has no Android Emulator hypervisor driver installed
+(`emulator -accel-check` says it's missing), so the AVD never gets past `offline`. Plug in a phone
+with USB debugging on and run `npm run android` to see it live.
 
 
