@@ -1,16 +1,48 @@
 # CineCatalog
 
-> **Ready to run.** No setup needed: download
-> **[CineCatalog-demo.apk](https://github.com/hafidrf/elemes-tmdb-app/releases/download/demo-v1.0/CineCatalog-demo.apk)**
-> (73.8 MB, universal, runs on phones and emulators), install it, open it. No Node, JDK or Android
-> SDK, and no TMDB sign-up.
->
-> This branch ships a filled-in `.env` for exactly that reason. **`main` is the clean branch** and
-> the one to assess: same app, without the credential.
+**Ready to run.** A TMDB browser built with React Native CLI (not Expo) for the App Developer test at
+Elemes Group — plus an Android demo anyone can install in under a minute.
 
-A TMDB browser built with React Native CLI (not Expo) for the App Developer test at Elemes Group.
+[![Download CineCatalog-demo.apk](https://img.shields.io/badge/Download_CineCatalog--demo.apk-73.8_MB-2ea043?style=for-the-badge&logo=android&logoColor=white)](https://github.com/hafidrf/elemes-tmdb-app/releases/download/demo-v1.0/CineCatalog-demo.apk)
+[![Release](https://img.shields.io/badge/Release-demo--v1.0-0969da?style=for-the-badge&logo=github&logoColor=white)](https://github.com/hafidrf/elemes-tmdb-app/releases/tag/demo-v1.0)
+[![Tests](https://img.shields.io/badge/tests-53_passing-2ea043?style=for-the-badge&logo=jest&logoColor=white)](#tests)
+[![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://github.com/hafidrf/elemes-tmdb-app/blob/main/tsconfig.json)
+
+**Jump to:** [Install the APK](#install-the-apk-no-build) · [Screenshots](#screenshots) ·
+[The nine lists](#the-nine-lists) · [Running it from source](#running-it) · [Code layout](#code-layout) ·
+[Tests](#tests)
+
 Four tabs (Movies, TV Shows, People, Watchlist) with all nine lists from the brief, plus search, a
 watchlist and a star rating that survive an app restart.
+
+## Install the APK (no build)
+
+Three steps, no toolchain:
+
+1. **[Download `CineCatalog-demo.apk`](https://github.com/hafidrf/elemes-tmdb-app/releases/download/demo-v1.0/CineCatalog-demo.apk)**
+   — 73.8 MB, universal, runs on phones and emulators. The same file is on the repository page under
+   **Releases → `demo-v1.0` → Assets**.
+2. Open the downloaded file on the phone and tap **Install**. Android may ask you to allow installs
+   from this source. The APK is signed with the standard Android Studio debug keystore, so Play
+   Protect can show an "unknown app" notice — expected, it is not a Play Store build.
+3. Open **CineCatalog**. No Node, JDK or Android SDK, and no TMDB sign-up: this branch ships a
+   filled-in `.env`, which is the only difference from the clean branch.
+
+<details>
+<summary>Verify the download (SHA-256)</summary>
+
+```text
+B32E43F83135A0247156C0CA268B217F96E18CF96B2C496A8E17DD7C3C4ABB7B
+```
+
+`certutil -hashfile CineCatalog-demo.apk SHA256` on Windows; `shasum -a 256 CineCatalog-demo.apk`
+on macOS and Linux.
+</details>
+
+> **Which branch to assess.** **`main` is the clean branch** and the one to assess: same app, without
+> the credential. `demo-with-api-key`, the branch you are reading, is `main` plus the filled-in
+> `.env` that makes the APK above run out of the box. That credential is rotated once the
+> recruitment process is over.
 
 ## Screenshots
 
@@ -74,9 +106,8 @@ npm start                 # terminal 1: Metro
 npm run android           # terminal 2: build, install, launch
 ```
 
-Or skip the build. A prebuilt universal APK is attached to the
-[latest release](https://github.com/hafidrf/elemes-tmdb-app/releases/latest), with the credential
-already inlined, so it installs and runs without Node, the JDK or the Android SDK.
+Or skip the build entirely: [Install the APK (no build)](#install-the-apk-no-build) above covers the
+prebuilt universal APK, credential already inlined.
 
 Or build a standalone release APK, which does not need Metro at all:
 
