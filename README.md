@@ -115,9 +115,9 @@ horizontal shelves, each with a See all button that opens a full paginated grid;
 
 The rest of what the brief asks for:
 
-- **Splash screen**: the Android launch theme (same mark, same background, so there is no flash of
-  a different colour) hands over to a branded three second splash in React, which fades out once the
-  first shelves have landed.
+- **Splash screen**: the launcher icon, the Android 12 system splash and the launch theme all draw the
+  same mark on the same background, so nothing flashes between them, and they hand over to a branded
+  three second splash in React that fades out once the first shelves have landed.
 - **Loading state**: skeleton placeholders shaped like the real cards, plus a spinner while paging.
 - **Search**: `/search/multi` behind a 400 ms debounce, so one bar covers movies, TV and people.
 - **Rating and watchlist**: both, stored in AsyncStorage, reachable from every detail screen and
@@ -148,8 +148,9 @@ src/
 
 `shared/` never imports from `features/`.
 
-`tools/generate-splash-logo.ps1` draws the splash mark from exact geometry and writes both the Android
-vector and the PNG the React splash uses, so the two can never drift apart.
+`tools/generate-splash-logo.ps1` draws the mark from exact geometry and writes every copy of it: the
+Android splash vector, the PNG the React splash uses, the adaptive launcher icon, the legacy launcher
+PNGs at five densities and the Android 12 system splash icon, so none of them can drift apart.
 
 ## Tests
 
