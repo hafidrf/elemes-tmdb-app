@@ -1,5 +1,27 @@
 # CineCatalog
 
+> **Note for a reviewer:** this is the `demo-with-api-key` branch. **`main` is the clean branch and
+> the one to assess** — it has the full README: design notes, the requirement coverage table, the
+> code layout and the known gaps.
+>
+> This branch exists for one reason: so the app can be run **without signing up for a TMDB key
+> first**. A filled-in `.env` is committed here on purpose, which is the one thing `main`
+> deliberately does not do. Clone this branch instead and go straight to the run steps:
+>
+> ```bash
+> git clone -b demo-with-api-key https://github.com/hafidrf/elemes-tmdb-app.git
+> cd elemes-tmdb-app
+> npm install
+> cd android
+> ./gradlew assembleRelease        # Windows: gradlew.bat assembleRelease
+> adb install -r app/build/outputs/apk/release/app-release.apk
+> adb shell am start -n com.elemestmdbapp/.MainActivity
+> ```
+>
+> The credential is the test author's own and is meant for running this test only. It will be
+> revoked once the recruitment process is over. If you keep working on the project past that,
+> create your own key at https://www.themoviedb.org/settings/api.
+
 A TMDB browser built with React Native CLI for the App Developer test at Elemes Group.
 
 Four tabs: Movies, TV Shows, People, Watchlist. All nine lists from the brief are in there,
