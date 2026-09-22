@@ -92,7 +92,7 @@ On iOS the native modules come from CocoaPods, so run `cd ios && pod install` on
 |---|---|
 | `npm start` | Metro |
 | `npm run android` | build, install, launch |
-| `npm test` | Jest, 52 tests |
+| `npm test` | Jest, 53 tests |
 | `npm run lint` | ESLint |
 | `npx tsc --noEmit` | type check |
 
@@ -154,7 +154,7 @@ vector and the PNG the React splash uses, so the two can never drift apart.
 ## Tests
 
 ```bash
-npm test          # 52 tests in 5 suites
+npm test          # 53 tests in 6 suites
 npm run lint      # eslint, no errors or warnings
 npx tsc --noEmit  # no type errors
 ```
