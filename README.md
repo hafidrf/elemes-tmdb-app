@@ -1,9 +1,9 @@
 # CineCatalog
 
-> **Ready to run — no setup needed.** Download
+> **Ready to run.** No setup needed: download
 > **[CineCatalog-demo.apk](https://github.com/hafidrf/elemes-tmdb-app/releases/download/demo-v1.0/CineCatalog-demo.apk)**
-> (73.8 MB, universal — phones and emulators), install it, open it. No Node, JDK or Android SDK, and
-> no TMDB sign-up.
+> (73.8 MB, universal, runs on phones and emulators), install it, open it. No Node, JDK or Android
+> SDK, and no TMDB sign-up.
 >
 > This branch ships a filled-in `.env` for exactly that reason. **`main` is the clean branch** and
 > the one to assess: same app, without the credential.
