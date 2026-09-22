@@ -4,6 +4,11 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!-- MainActivity swaps SplashTheme for this in onCreate, which happens
+             before React has painted anything. Pointing both themes at the same
+             background makes that swap invisible instead of flashing the
+             platform default for a frame. -->
+        <item name="android:windowBackground">@color/splash_background</item>
     </style>
 
     <!-- launch screen, replaced by AppTheme in MainActivity.onCreate -->

@@ -167,9 +167,146 @@ $pg.DrawString('MOVIES  ·  TV  ·  PEOPLE', $small, $muted, (New-Object System.
 $pg.Dispose()
 $preview.Save($outPreview, [System.Drawing.Imaging.ImageFormat]::Png)
 
+$gradient = @"
+                <gradient
+                    android:type="linear"
+                    android:startX="30" android:startY="10"
+                    android:endX="98" android:endY="112"
+                    android:startColor="#FFE3BC"
+                    android:centerColor="#FFC46B"
+                    android:endColor="#F29B2C" />
+"@
+
+# A vector that is the mark, scaled about its own centre. Two consumers need two
+# different scales: the adaptive launcher icon keeps the mark inside the 66dp
+# safe circle of its 108dp canvas, and the Android 12 splash icon wants the mark
+# to be two thirds of its 288dp canvas.
+function MarkVector([string]$sizeDp, [double]$scale, [string]$note) {
+    $s = $scale.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+@"
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  $note
+  Generated from the same geometry as splash_logo.xml by
+  tools/generate-splash-logo.ps1 - do not hand edit the path.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="$sizeDp"
+    android:height="$sizeDp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <group
+        android:scaleX="$s"
+        android:scaleY="$s"
+        android:pivotX="60"
+        android:pivotY="60">
+        <path
+            android:fillType="evenOdd"
+            android:pathData="$pathData">
+            <aapt:attr name="android:fillColor">
+$gradient
+            </aapt:attr>
+        </path>
+    </group>
+</vector>
+"@
+}
+
+$outForeground = Join-Path $root 'android\app\src\main\res\drawable\ic_launcher_foreground.xml'
+$outSplashIcon = Join-Path $root 'android\app\src\main\res\drawable\splash_icon.xml'
+
+MarkVector '108dp' 0.73 'Launcher icon foreground: the mark on the adaptive icon canvas.' |
+    Set-Content -Path $outForeground -Encoding utf8
+MarkVector '288dp' 0.77 'Android 12+ system splash icon, mark at two thirds of the canvas.' |
+    Set-Content -Path $outSplashIcon -Encoding utf8
+
+# adaptive icon wrappers, API 26+
+$anydpi = Join-Path $root 'android\app\src\main\res\mipmap-anydpi-v26'
+if (-not (Test-Path $anydpi)) { New-Item -ItemType Directory -Force -Path $anydpi | Out-Null }
+$adaptive = @"
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+"@
+Set-Content -Path (Join-Path $anydpi 'ic_launcher.xml') -Value $adaptive -Encoding utf8
+Set-Content -Path (Join-Path $anydpi 'ic_launcher_round.xml') -Value $adaptive -Encoding utf8
+
+
+# --- legacy launcher icons, for API < 26 -----------------------------------
+# A dark tile with the amber mark: a squircle for ic_launcher and a circle for
+# ic_launcher_round. Adaptive icons in mipmap-anydpi-v26 cover API 26+, which is
+# what almost every device in the field uses.
+$tileColour = [System.Drawing.ColorTranslator]::FromHtml('#12141A')
+$markScale = 0.72
+$densities = [ordered]@{ 'mdpi' = 48; 'hdpi' = 72; 'xhdpi' = 96; 'xxhdpi' = 144; 'xxxhdpi' = 192 }
+$iconCount = 0
+
+foreach ($d in $densities.Keys) {
+    $px = $densities[$d]
+
+    foreach ($round in @($false, $true)) {
+        $icon = New-Object System.Drawing.Bitmap($px, $px, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $gi = [System.Drawing.Graphics]::FromImage($icon)
+        $gi.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+        $gi.Clear([System.Drawing.Color]::Transparent)
+
+        $tile = New-Object System.Drawing.Drawing2D.GraphicsPath
+        if ($round) {
+            $tile.AddEllipse(0, 0, $px, $px)
+        } else {
+            $corner = [single]($px * 0.22)
+            $d2 = $corner * 2
+            $tile.AddArc(0, 0, $d2, $d2, 180, 90)
+            $tile.AddArc($px - $d2, 0, $d2, $d2, 270, 90)
+            $tile.AddArc($px - $d2, $px - $d2, $d2, $d2, 0, 90)
+            $tile.AddArc(0, $px - $d2, $d2, $d2, 90, 90)
+            $tile.CloseFigure()
+        }
+        $tileBrush = New-Object System.Drawing.SolidBrush($tileColour)
+        $gi.FillPath($tileBrush, $tile)
+
+        # $gp lives in the 512px space, centred on 256. Map the whole 120 unit
+        # box so that the 104 unit disc comes out at $markScale of the tile.
+        # These calls compose so that the effective map is
+        #   p' = centre + k * (p - 256)
+        # which is what puts the mark on the canvas. Adding an explicit
+        # MatrixOrder::Append here flips the composition and throws the mark to
+        # (-243,-243) on a 96px tile, i.e. off the canvas entirely - verified by
+        # counting the pixels a probe fill lands on.
+        $box = (120.0 / 104.0) * $markScale * $px
+        $k = [single]($box / 512.0)
+        $state = $gi.Save()
+        $gi.TranslateTransform([single]($px / 2), [single]($px / 2))
+        $gi.ScaleTransform($k, $k)
+        $gi.TranslateTransform(-256, -256)
+
+        $gi.FillPath($brush, $gp)
+        $gi.Restore($state)
+        $gi.Dispose()
+
+        $dir = Join-Path $root ("android\app\src\main\res\mipmap-$d")
+        if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+        $name = if ($round) { 'ic_launcher_round.png' } else { 'ic_launcher.png' }
+        $icon.Save((Join-Path $dir $name), [System.Drawing.Imaging.ImageFormat]::Png)
+        $icon.Dispose()
+        $tileBrush.Dispose()
+        $tile.Dispose()
+        $iconCount++
+    }
+}
+
 $bmp.Dispose(); $brush.Dispose(); $gp.Dispose(); $preview.Dispose()
 
 Write-Host "vector  : $outVector"
 Write-Host "png     : $outPng"
 Write-Host "preview : $outPreview"
+Write-Host "icon fg : $outForeground"
+Write-Host "icon 12 : $outSplashIcon"
+Write-Host "adaptive: 2 files in mipmap-anydpi-v26"
+Write-Host "legacy  : $iconCount png files"
 Write-Host "pathData length: $($pathData.Length)"
