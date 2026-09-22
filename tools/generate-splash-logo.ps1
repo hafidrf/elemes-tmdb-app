@@ -219,7 +219,13 @@ $outSplashIcon = Join-Path $root 'android\app\src\main\res\drawable\splash_icon.
 
 MarkVector '108dp' 0.73 'Launcher icon foreground: the mark on the adaptive icon canvas.' |
     Set-Content -Path $outForeground -Encoding utf8
-MarkVector '288dp' 0.77 'Android 12+ system splash icon, mark at two thirds of the canvas.' |
+# The system draws this canvas at its intrinsic 288dp, so the scale sets how
+# big the mark lands on screen during the Android 12 splash. 0.485 was measured
+# against a real device: at 0.77 the disc came out 1.59x the disc the in-app
+# splash shows (LOGO_SIZE 132dp, so a 114dp disc), which read as a pop at the
+# handover. Same geometry on both sides, so that ratio converts straight into
+# the scale.
+MarkVector '288dp' 0.485 'Android 12+ system splash icon, matched to the in-app splash mark.' |
     Set-Content -Path $outSplashIcon -Encoding utf8
 
 # adaptive icon wrappers, API 26+
