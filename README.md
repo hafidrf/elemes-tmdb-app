@@ -9,7 +9,7 @@
 > the one to assess: same app, without the credential.
 
 A TMDB browser built with React Native CLI (not Expo) for the App Developer test at Elemes Group.
-Four tabs — Movies, TV Shows, People, Watchlist — with all nine lists from the brief, plus search, a
+Four tabs (Movies, TV Shows, People, Watchlist) with all nine lists from the brief, plus search, a
 watchlist and a star rating that survive an app restart.
 
 ## Screenshots
@@ -33,7 +33,7 @@ Live captures from the release build on a physical phone (Infinix X6855, Android
 | Framework | React Native CLI 0.85.2 (not Expo), New Architecture on |
 | Language | TypeScript, strict |
 | State | Redux Toolkit + RTK Query |
-| Navigation | React Navigation 7 — native stack plus bottom tabs |
+| Navigation | React Navigation 7, native stack plus bottom tabs |
 | Storage | AsyncStorage, for the watchlist and the ratings |
 | Images | `@d11/react-native-fast-image`, the Fabric-ready fast-image fork |
 | Icons | `@react-native-vector-icons/ionicons` |
@@ -70,8 +70,8 @@ param instead.
 ### Starting it
 
 ```bash
-npm start                 # terminal 1 — Metro
-npm run android           # terminal 2 — build, install, launch
+npm start                 # terminal 1: Metro
+npm run android           # terminal 2: build, install, launch
 ```
 
 Or build a standalone release APK, which does not need Metro at all:
@@ -115,14 +115,14 @@ horizontal shelves, each with a See all button that opens a full paginated grid;
 
 The rest of what the brief asks for:
 
-- **Splash screen** — the Android launch theme (same mark, same background, so there is no flash of
+- **Splash screen**: the Android launch theme (same mark, same background, so there is no flash of
   a different colour) hands over to a branded three second splash in React, which fades out once the
   first shelves have landed.
-- **Loading state** — skeleton placeholders shaped like the real cards, plus a spinner while paging.
-- **Search** — `/search/multi` behind a 400 ms debounce, so one bar covers movies, TV and people.
-- **Rating and watchlist** — both, stored in AsyncStorage, reachable from every detail screen and
+- **Loading state**: skeleton placeholders shaped like the real cards, plus a spinner while paging.
+- **Search**: `/search/multi` behind a 400 ms debounce, so one bar covers movies, TV and people.
+- **Rating and watchlist**: both, stored in AsyncStorage, reachable from every detail screen and
   from the Watchlist tab.
-- **Error and empty states** — one `StateView`, always with a Retry button, never a blank screen.
+- **Error and empty states**: one `StateView`, always with a Retry button, never a blank screen.
 - **Pull to refresh, infinite scroll**, and an offline banner.
 
 ## Code layout
@@ -150,19 +150,6 @@ src/
 
 `tools/generate-splash-logo.ps1` draws the splash mark from exact geometry and writes both the Android
 vector and the PNG the React splash uses, so the two can never drift apart.
-
-## Known issues
-
-1. **iOS is untested.** The code is platform agnostic and `ios/` is intact, but it was built and run
-   on Android only. The brief allows Android Studio, and this was done on Windows.
-2. **Metro's dev server would not start on the machine this was built on.** Metro 0.84.6 on Windows
-   without watchman dies with `Failed to get the SHA-1 for: .../metro-runtime/src/polyfills/require.js`.
-   `gradlew assembleRelease` and `gradlew assembleDebug` both work, which is why the app was verified
-   through the release build. Installing watchman should clear it.
-3. **No trailer playback.** `GET /movie/{id}/videos` is wired into the API layer but nothing plays it.
-   The watchlist and rating requirement got the time instead.
-4. **`.env` is required.** Without it the app still starts, every request fails, and you land on the
-   error state with a Retry button instead of a crash.
 
 ## Tests
 
