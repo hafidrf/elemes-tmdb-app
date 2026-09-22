@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Android 12+ system splash icon, mark at two thirds of the canvas.
+  Android 12+ system splash icon, matched to the in-app splash mark.
   Generated from the same geometry as splash_logo.xml by
   tools/generate-splash-logo.ps1 - do not hand edit the path.
 -->
@@ -12,8 +12,8 @@
     android:viewportHeight="120">
 
     <group
-        android:scaleX="0.77"
-        android:scaleY="0.77"
+        android:scaleX="0.485"
+        android:scaleY="0.485"
         android:pivotX="60"
         android:pivotY="60">
         <path
