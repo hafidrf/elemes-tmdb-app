@@ -3,4 +3,7 @@
     <!-- same value as colors.background in src/shared/theme/colors.ts, so the
          launch theme and the first React frame are the same colour -->
     <color name="splash_background">#08090C</color>
+
+    <!-- adaptive launcher icon background, same value as colors.surface -->
+    <color name="ic_launcher_background">#12141A</color>
 </resources>

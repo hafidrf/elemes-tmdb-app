@@ -1,0 +1,17 @@
+<resources>
+
+    <!--
+      Android 12 and newer always draw a system splash before the app gets a
+      frame, and it builds that splash from the theme. With no
+      windowSplashScreenAnimatedIcon the system falls back to the launcher icon,
+      which is what made the default Android icon blink before the in-app splash.
+      Point it at our mark on our background so what the system draws and what
+      the app draws next are the same picture.
+    -->
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="android:windowSplashScreenAnimationDuration">0</item>
+    </style>
+
+</resources>
