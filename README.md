@@ -74,6 +74,10 @@ npm start                 # terminal 1: Metro
 npm run android           # terminal 2: build, install, launch
 ```
 
+Or skip the build. A prebuilt universal APK is attached to the
+[latest release](https://github.com/hafidrf/elemes-tmdb-app/releases/latest), with the credential
+already inlined, so it installs and runs without Node, the JDK or the Android SDK.
+
 Or build a standalone release APK, which does not need Metro at all:
 
 ```bash
