@@ -13,6 +13,7 @@ module.exports = {
   // RN Image instead of trying to resolve a host component.
   moduleNameMapper: {
     '\\.(ttf|otf|woff2?|eot)$': '<rootDir>/__mocks__/fontMock.js',
+    '\\.(png|jpe?g|gif|webp)$': '<rootDir>/__mocks__/imageMock.js',
     '^@d11/react-native-fast-image$': '<rootDir>/__mocks__/fastImageMock.js',
   },
   collectCoverageFrom: [

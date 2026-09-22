@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- same value as colors.background in src/shared/theme/colors.ts -->
-    <color name="splash_background">#0B0D10</color>
+    <!-- same value as colors.background in src/shared/theme/colors.ts, so the
+         launch theme and the first React frame are the same colour -->
+    <color name="splash_background">#08090C</color>
 </resources>

@@ -107,8 +107,9 @@ horizontal shelves, each with a See all button that opens a full paginated grid;
 
 The rest of what the brief asks for:
 
-- **Splash screen** — native Android launch theme, swapped for the real theme in
-  `MainActivity.onCreate`.
+- **Splash screen** — the Android launch theme (same mark, same background, so there is no flash of
+  a different colour) hands over to a branded three second splash in React, which fades out once the
+  first shelves have landed.
 - **Loading state** — skeleton placeholders shaped like the real cards, plus a spinner while paging.
 - **Search** — `/search/multi` behind a 400 ms debounce, so one bar covers movies, TV and people.
 - **Rating and watchlist** — both, stored in AsyncStorage, reachable from every detail screen and
@@ -121,6 +122,7 @@ The rest of what the brief asks for:
 ```
 src/
   app/          navigation and the redux store
+  assets/       the splash mark, generated
   constants/    TMDB urls/sizes, plus the one file that reads @env
   features/
     catalog/    the nine lists, the shelves, the See all grids
@@ -137,6 +139,9 @@ src/
 ```
 
 `shared/` never imports from `features/`.
+
+`tools/generate-splash-logo.ps1` draws the splash mark from exact geometry and writes both the Android
+vector and the PNG the React splash uses, so the two can never drift apart.
 
 ## Known issues
 

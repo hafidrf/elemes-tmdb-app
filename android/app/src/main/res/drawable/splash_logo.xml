@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- vector so there's no PNG to ship and it scales at any density -->
+<!--
+  CineCatalog mark: an aperture. A disc, a hexagonal iris opening, and six seams
+  from the opening's corners out to the rim, all in one path with an evenOdd fill
+  so the opening and the seams are punched out and the splash colour shows
+  through. The path is generated from exact geometry by
+  tools/generate-splash-logo.ps1 - do not hand edit it.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="120dp"
-    android:height="120dp"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="132dp"
+    android:height="132dp"
     android:viewportWidth="120"
     android:viewportHeight="120">
 
-    <!-- Outer amber ring -->
     <path
-        android:fillColor="#F0B429"
-        android:pathData="M60,4 A56,56 0 1,1 59.99,4 Z" />
-
-    <!-- Inner canvas-coloured disc -->
-    <path
-        android:fillColor="#0B0D10"
-        android:pathData="M60,15 A45,45 0 1,1 59.99,15 Z" />
-
-    <!-- Play glyph -->
-    <path
-        android:fillColor="#F0B429"
-        android:pathData="M50,41 L83,60 L50,79 Z" />
+        android:fillType="evenOdd"
+        android:pathData="M60,8 A52,52 0 1,0 60,112 A52,52 0 1,0 60,8 Z M79,60 L69.5,76.45 L50.5,76.45 L41,60 L50.5,43.55 L69.5,43.55 Z M79,61.15 L112,61.15 L112,58.85 L79,58.85 Z M68.5,77.03 L85,105.61 L87,104.46 L70.5,75.88 Z M49.5,75.88 L33,104.46 L35,105.61 L51.5,77.03 Z M41,58.85 L8,58.85 L8,61.15 L41,61.15 Z M51.5,42.97 L35,14.39 L33,15.54 L49.5,44.12 Z M70.5,44.12 L87,15.54 L85,14.39 L68.5,42.97 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="30" android:startY="10"
+                android:endX="98" android:endY="112"
+                android:startColor="#FFE3BC"
+                android:centerColor="#FFC46B"
+                android:endColor="#F29B2C" />
+        </aapt:attr>
+    </path>
 </vector>
